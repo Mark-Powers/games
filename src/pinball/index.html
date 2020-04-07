@@ -1,0 +1,120 @@
+<center>
+    <canvas id="canvas"></canvas>
+</center>
+<script>
+    var WIDTH = 300
+    var HEIGHT = 400
+    window.onload = function(){
+        canvas = document.getElementById("canvas");
+        ctx = canvas.getContext("2d"); 
+        canvas.width = WIDTH;    
+        canvas.height = HEIGHT;
+        document.addEventListener("keydown",keyDown);
+        document.addEventListener("keyup",keyUp);
+        setInterval(game, 1000/10);
+    }
+    var tileCountWidth = 30;
+    var tileCountHeight = 40;
+    var tileWidth = WIDTH/tileCountWidth;
+    var tileHeight = HEIGHT/tileCountHeight;
+    var ballX = WIDTH/2;
+    var ballY = 10;
+    var leftUp = false;
+    var rightUp = false;
+    var vx = randomInt(20)-10;
+    var vy = 0;
+    var ay = 2;
+    var ymax = 20;
+    var length = 5;
+    var paddleWidth = 11;
+    function game(){
+        update()
+
+        color("black"); 
+        // BACKGROUND
+        ctx.fillRect(0,0,WIDTH, HEIGHT);
+        // SIDES
+        color("blue");
+        ctx.fillRect(0,0,tileWidth, HEIGHT);
+//        console.log(WIDTH, tileWidth, tileCountWidth)
+        ctx.fillRect(WIDTH-tileWidth, 0, tileWidth, HEIGHT);
+        ctx.beginPath();
+        // DRAW BALL
+        color("white");
+        ctx.fillRect(ballX, ballY, tileWidth, tileHeight);
+        // DRAW PADDLES
+        color("red");
+        ctx.lineWidth=10;
+        
+        ctx.moveTo(1*tileWidth, 33*tileHeight);
+        if(leftUp){
+            ctx.lineTo((1+paddleWidth)*tileWidth, 33*tileHeight);
+        } else {
+            ctx.lineTo((1+paddleWidth)*tileWidth, 35*tileHeight);
+        }
+        ctx.stroke();
+        var t = tileCountWidth - 1
+        ctx.moveTo(t*tileWidth, 33*tileHeight);
+        if(rightUp){
+            ctx.lineTo((t-paddleWidth)*tileWidth, 33*tileHeight);
+        } else {
+            ctx.lineTo((t-paddleWidth)*tileWidth, 35*tileHeight);
+        }
+        ctx.stroke();
+    }
+    function update(){
+
+        if(((leftUp && ballX/tileWidth <=8) || (rightUp && ballX/tileWidth >=13)) 
+            && ballY/tileHeight <= 35 && ballY/tileHeight >= 32){
+            console.log("Hit!")
+            vy=-20
+        }
+        vy += ay
+        vy = Math.min(vy, ymax)
+        ballY += vy
+        ballX += vx
+        if(ballX <= tileWidth){
+            ballX = tileWidth
+            vx = -vx
+        }
+        if(ballX >= WIDTH-(2*tileWidth)){
+            ballX = WIDTH-(2*tileWidth)
+            vx = -vx
+        }
+
+    }
+    function keyUp(e){
+        switch(e.keyCode){
+            case 37:
+                leftUp = false;
+                break;
+            case 39:
+                rightUp = false;
+                break;
+        }
+    }
+    function keyDown(e){
+        switch(e.keyCode){
+            case 37:
+                leftUp = true;
+                break;
+            case 39:
+                rightUp = true;
+                break;
+        }
+    }
+    function setRandomCoords(item){
+        item.x = randomInt(tileWidth);
+        item.y = randomInt(tileHeight);
+    }
+    function randomInt(max){
+        return Math.floor(Math.random()*max);
+    }
+    function font(size){
+        ctx.font=size+"px Courier";
+    }
+    function color(c){
+        ctx.strokeStyle=c;
+        ctx.fillStyle=c;
+    }
+</script>

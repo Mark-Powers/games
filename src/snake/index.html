@@ -1,0 +1,83 @@
+<center>
+    <canvas width="400" height="400" id="canvas"></canvas>
+</center>
+<script>
+    window.onload = function(){
+        canvas = document.getElementById("canvas");
+        ctx = canvas.getContext("2d");
+//        canvas.height = 300;
+//        canvas.width = 400;    
+        document.addEventListener("keydown",keyPush);
+        setInterval(game, 1000/10);
+    }
+    var tileCountWidth = 40;
+    var tileCountHeight = 40;
+    var tileWidth = canvas.width/tileCountWidth;
+    var tileHeight = canvas.height/tileCountHeight;
+    var snake = [];
+    var x = randomInt(tileWidth);
+    var y = randomInt(tileHeight);
+    var vx = 1;
+    var vy = 0;
+    var apple = {}; 
+    console.log(apple);
+    setRandomCoords(apple);
+    console.log(apple);
+    var length = 5;
+    function game(){
+        color("black"); 
+        ctx.fillRect(0,0,canvas.width, canvas.height);
+        color("white"); 
+        for(var i = 0; i < snake.length; i++){
+            ctx.fillRect(snake[i].x*tileWidth, snake[i].y*tileHeight, tileWidth, tileHeight);
+        }
+        color("red");
+        ctx.fillRect(apple.x*tileWidth, apple.y*tileHeight, tileWidth, tileHeight);
+
+        x+=vx;
+        y+=vy;
+        snake.push({"x": x, "y": y});
+        if(x==apple.x && y==apple.y){
+            length++;
+            setRandomCoords(apple);
+        }
+
+        while(snake.length > length){
+            snake.shift();
+        }
+
+    }
+    function keyPush(e){
+        switch(e.keyCode){
+            case 37:
+                vx = -1;
+                vy = 0;
+                break;
+            case 38:
+                vx = 0;
+                vy = -1;
+                break;
+            case 39:
+                vx = 1;
+                vy = 0;
+                break;
+            case 40:
+                vx = 0;
+                vy = 1;
+                break;
+        }
+    }
+    function setRandomCoords(item){
+        item.x = randomInt(tileWidth);
+        item.y = randomInt(tileHeight);
+    }
+    function randomInt(max){
+        return Math.floor(Math.random()*max);
+    }
+    function font(size){
+        ctx.font=size+"px Courier";
+    }
+    function color(c){
+        ctx.fillStyle=c;
+    }
+</script>
