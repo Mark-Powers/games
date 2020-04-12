@@ -10,15 +10,17 @@
 
 <body style="padding:0; margin:0; overflow:hidden;">
     <canvas id="canvas"></canvas>
+    <script src="/highscore.js"></script>
     <script>
         var gameInterval, canvas, ctx;
         var score, t, isGameOver, mouseX, mouseY, scaleX, scaleY, selected, stack, next, v, perfect;
-        let VELOCITY = 15;
+        var username = undefined;
+        let VELOCITY = 3;
 
         function init() {
-            next = {left: 0, width:200};
+            next = { left: 0, width: 200 };
             v = VELOCITY;
-            stack = [{left: 100, width:200}];
+            stack = [{ left: 100, width: 200 }];
 
             score = 0;
             isGameOver = false;
@@ -27,7 +29,7 @@
             t = 0;
             selected = -1;
             perfect = 0;
-            gameInterval = setInterval(game, 1000 / 10);
+            gameInterval = setInterval(game, 1000 / 60);
         }
 
         window.onload = function () {
@@ -47,10 +49,10 @@
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            scaleX = window.innerWidth/400; 
-            scaleY = window.innerHeight/600;
+            scaleX = window.innerWidth / 400;
+            scaleY = window.innerHeight / 600;
 
-            if(scaleX/scaleY > 1.3){
+            if (scaleX / scaleY > 1.3) {
                 scaleX = scaleY = 1;
             }
             ctx.scale(scaleX, scaleY);
@@ -61,41 +63,41 @@
         }
         function draw() {
             color("white");
-            ctx.fillRect(0, 0, canvas.width,canvas.height);
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             color("black");
-            ctx.fillRect(0, 0, 400,400);
-            
+            ctx.fillRect(0, 0, 400, 400);
+
             // Draw moving block
-            if(stack.length % 2 == 0){
+            if (stack.length % 2 == 0) {
                 color("white");
             } else {
                 color("red")
             }
             var y;
-            if(stack.length < 10){
-                y = 380-stack.length*20;
+            if (stack.length < 10) {
+                y = 380 - stack.length * 20;
             } else {
-                y = 380-10*20;
+                y = 380 - 10 * 20;
             }
             ctx.fillRect(next.left, y, next.width, 20)
 
 
             // Draw stack
-            var index = max(stack.length-10, 0);
+            var index = max(stack.length - 10, 0);
             stack.slice(-10).forEach((element, i) => {
-                if(index % 2 == 0){
+                if (index % 2 == 0) {
                     color("white");
                 } else {
                     color("red")
                 }
-                
-                let y = 380-i*20
+
+                let y = 380 - i * 20
                 ctx.fillRect(element.left, y, element.width, 20)
                 index++;
             });
-            
+
             // Draw "perfect" marker
-            if(perfect > 0 ){
+            if (perfect > 0) {
                 font(20);
                 color("red");
                 let last = stack[stack.length - 1]
@@ -110,12 +112,12 @@
 
             // Draw touch controls
             color("#ff9900");
-            if(selected) {
+            if (selected) {
                 color("#cc9900")
             }
             ctx.beginPath();
             ctx.moveTo(200, 500);
-            ctx.arc(200, 500, 100, 0, 2*Math.PI);
+            ctx.arc(200, 500, 100, 0, 2 * Math.PI);
             ctx.fill();
             selected = 0;
 
@@ -124,17 +126,18 @@
                 font(32);
                 ctx.fillText("Game over!", 160, 200);
                 font(24);
+                ctx.fillText("(press any key)", 160, 240)
             }
         }
 
         function update() {
             t++;
             next.left += v;
-            if(next.left + next.width >= 400) {
+            if (next.left + next.width >= 400) {
                 let diff = next.left + next.width - 400;
                 next.left -= diff;
                 v = -1 * VELOCITY;
-            } else if(next.left <= 0) {
+            } else if (next.left <= 0) {
                 let diff = 0 - next.left;
                 next.left += diff;
                 v = VELOCITY;
@@ -150,44 +153,44 @@
             return a < b ? a : b;
         }
         function keyPush(e) {
-            if(isGameOver){
+            if (isGameOver) {
                 init();
                 return;
             }
-            if(e.keyCode == 32){
-                let last = stack[stack.length -1];
+            if (e.keyCode == 32) {
+                let last = stack[stack.length - 1];
                 var left = max(next.left, last.left);
-                let right = min(next.left + next.width, last.left+last.width);
-                var width = right-left;
+                let right = min(next.left + next.width, last.left + last.width);
+                var width = right - left;
 
-                if(stack[stack.length -1 ].width - width < 10){
-                    width = stack[stack.length -1 ].width
-                    left = stack[stack.length -1 ].left
-                    perfect = 5;
+                if (stack[stack.length - 1].width - width < 6) {
+                    width = stack[stack.length - 1].width
+                    left = stack[stack.length - 1].left
+                    perfect = 15;
                 }
 
-                if(width > 0){
-                    stack.push({left: left, width: width})
+                if (width > 0) {
+                    stack.push({ left: left, width: width })
                     score += 1;
                 }
-                
-                if(v < 0) {
-                    next = {left: 0, width: width}
+
+                if (v < 0) {
+                    next = { left: 0, width: width }
                     v = VELOCITY
                 } else {
-                    next = {left: 400-width, width: width}
+                    next = { left: 400 - width, width: width }
                     v = -1 * VELOCITY
                 }
             }
         }
         function mousePush(e) {
-            mouseX = e.clientX/scaleX - 200;
-            mouseY = e.clientY/scaleY - 500;
+            mouseX = e.clientX / scaleX - 200;
+            mouseY = e.clientY / scaleY - 500;
             if (Math.sqrt(mouseX * mouseX + mouseY * mouseY) > 100) {
                 return;
             }
             selected = 1;
-            keyPush({keyCode:  32})
+            keyPush({ keyCode: 32 })
         }
         function randomInt(max) {
             return Math.floor(Math.random() * max);
@@ -201,13 +204,7 @@
         function gameOver() {
             isGameOver = true;
             clearInterval(gameInterval);
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const uid = urlParams.get('uid');
-            const mid = urlParams.get('mid');
-
-            const request = new Request(`/setScore?uid=${uid}&mid=${mid}&score=${score}`);
-            fetch(request).then(response => console.log("response"));
+            username = submitScore("stacker", score, username);
         }
     </script>
 </body>

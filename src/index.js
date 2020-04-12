@@ -46,6 +46,20 @@ async function sync(alter, force, callback) {
 
 function setUpModels() {
   const models = {
+    "scores": database.define('score', {
+      username: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      score: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      game: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      }
+    })
   }
   return models;
 }
@@ -60,5 +74,6 @@ server.load("./snake/server", models, jwtFunctions, database)
 server.load("./stacker/server", models, jwtFunctions, database)
 server.load("./pinball/server", models, jwtFunctions, database)
 server.load("./math/server", models, jwtFunctions, database)
+server.load("./pp/server", models, jwtFunctions, database)
 server.listen(config.port);
 
