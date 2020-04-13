@@ -1,7 +1,7 @@
 // The callbacks to be called each frame on update, 
 // and on draw
 // The interval object
-var gameInterval, selectedX, selectedY, timeElapsed, timeStart, frame;
+var gameInterval, selectedX, selectedY, selectedLayer, timeElapsed, timeStart, frame;
 let width = 800;
 let height = 600;
 let fps = 30;
@@ -14,6 +14,8 @@ let IMG_HEIGHT = 39
 let TILE_WIDTH = 2 + IMG_WIDTH
 let TILE_HEIGHT = 2 + IMG_HEIGHT
 
+var username = undefined
+
 // leave first two blank
 var board
 
@@ -24,7 +26,7 @@ window.onload = function () {
     canvas.height = height;
     document.addEventListener("mousedown", mouseDownCallback);
     document.addEventListener("mouseup", mouseUpCallback);
-    document.addEventListener("mousemove", function(e){
+    document.addEventListener("mousemove", function (e) {
         mouseX = e.x
         mouseY = e.y
     });
@@ -56,51 +58,75 @@ function shuffle(a) {
     return a;
 }
 
-function swapTiles(){
+function swapTiles() {
     count = 0
     template = []
-    for (var x = 0; x < board.length; x++) {
+    for (var layer = 0; layer < board.length; layer++) {
         template.push([])
-        for (var y = 0; y < board[x].length; y++) {
-            template[x].push(undefined)
-            template[x][y] = board[x][y]
-            if(board[x][y] != undefined){
-                count++
+        for (var x = 0; x < board[layer].length; x++) {
+            template[layer].push([])
+            for (var y = 0; y < board[layer][x].length; y++) {
+                template[layer][x].push(undefined)
+                template[layer][x][y] = board[layer][x][y]
+                if (board[layer][x][y] != undefined) {
+                    count++
+                }
             }
         }
     }
-    for (var i = 0; i < count/2; i++) {
+    for (var i = 0; i < count / 2; i++) {
         items.push(i)
         items.push(i)
     }
     shuffle(items)
     board = []
-    for (var x = 0; x < template.length; x++) {
+    for (var layer = 0; layer < template.length; layer++) {
         board.push([])
-        for (var y = 0; y < template[x].length; y++) {
-            board[x].push(undefined)
-            if (template[x][y] != undefined) {
-                board[x][y] = items.pop()
+        for (var x = 0; x < template[layer].length; x++) {
+            board[layer].push([])
+            for (var y = 0; y < template[layer][x].length; y++) {
+                board[layer][x].push(undefined)
+                if (template[layer][x][y] != undefined) {
+                    board[layer][x][y] = items.pop()
+                }
             }
         }
     }
 }
 
+function countItems(template) {
+    var count = 0;
+    for (var layer = 0; layer < template.length; layer++) {
+        for (var x = 0; x < template[layer].length; x++) {
+            for (var y = 0; y < template[layer][x].length; y++) {
+                if (template[layer][x][y]) {
+                    count++
+                }
+            }
+        }
+    }
+    return count
+}
+
 function loadTemplate() {
     template = dragon
+    var itemCount = countItems(template) / 2
     items = []
-    for (var i = 0; i < 8; i++) {
+    for (var i = 0; i < itemCount; i++) {
         items.push(i)
         items.push(i)
     }
     shuffle(items)
     board = []
-    for (var x = 0; x < template.length; x++) {
+    for (var layer = 0; layer < template.length; layer++) {
         board.push([])
-        for (var y = 0; y < template[x].length; y++) {
-            board[x].push(undefined)
-            if (template[x][y]) {
-                board[x][y] = items.pop()
+        for (var x = 0; x < template[layer].length; x++) {
+            board[layer].push([])
+            for (var y = 0; y < template[layer][x].length; y++) {
+                board[layer][x].push(undefined)
+                if (template[layer][x][y]) {
+                    board[layer][x][y] = items.pop()
+                }
             }
         }
     }
@@ -110,10 +136,12 @@ var updateCallback = function () {
     timeElapsed = Math.floor(new Date().getTime() / 1000) - timeStart
 
     var done = true
-    for (var x = 0; x < board.length; x++) {
-        for (var y = 0; y < board[x].length; y++) {
-            if (board[x][y] != undefined) {
-                done = false
+    for (var layer = 0; layer < board.length; layer++) {
+        for (var x = 0; x < board[layer].length; x++) {
+            for (var y = 0; y < board[layer][x].length; y++) {
+                if (board[layer][x][y] != undefined) {
+                    done = false
+                }
             }
         }
     }
@@ -137,7 +165,7 @@ var drawCallback = function () {
     font(50)
     ctx.fillText("Picture Pieces", 100, 36)
 
-    if(gameOver){
+    if (gameOver) {
         ctx.fillStyle = "#000080"
         font(50)
         ctx.fillText("Congratuations", 100, 200)
@@ -145,65 +173,71 @@ var drawCallback = function () {
         var minutes = Math.floor(timeElapsed / 60)
         var seconds = timeElapsed % 60
         ctx.fillText("Your final time was " + minutes + ":" + seconds, 110, 240)
+        username = submitScore("picture pieces", timeElapsed, username);
         return
     }
 
-    
-    for (var x = board.length-1; x >= 0; x--) {
-        for (var y = 0; y < board[x].length; y++) {
-            if (board[x][y] == undefined) {
-                continue
+
+    let tileLeftOffset = 6
+    let tileBottomOffset = 6
+    for (var layer = 0; layer < board.length; layer++) {
+        var xOffset = layer * tileLeftOffset
+        var yOffset = -1 * layer * tileBottomOffset
+        for (var x = board[layer].length - 1; x >= 0; x--) {
+            for (var y = 0; y < board[layer][x].length; y++) {
+                if (board[layer][x][y] == undefined) {
+                    continue
+                }
+                ctx.fillStyle = "#ffe6e6"
+                ctx.beginPath()
+                ctx.moveTo(x * TILE_WIDTH + xOffset, y * TILE_HEIGHT + yOffset)
+                ctx.lineTo(x * TILE_WIDTH - tileLeftOffset + xOffset, y * TILE_HEIGHT + tileBottomOffset + yOffset)
+                ctx.lineTo(x * TILE_WIDTH - tileLeftOffset + xOffset, (y + 1) * TILE_HEIGHT + tileBottomOffset + yOffset)
+                ctx.lineTo(x * TILE_WIDTH + xOffset, (y + 1) * TILE_HEIGHT + yOffset)
+                ctx.closePath()
+                ctx.fill();
+
+                ctx.fillStyle = '#ff9999'
+                ctx.beginPath()
+                ctx.moveTo(x * TILE_WIDTH + xOffset, (y + 1) * TILE_HEIGHT + yOffset)
+                ctx.lineTo((x + 1) * TILE_WIDTH + xOffset, (y + 1) * TILE_HEIGHT + yOffset)
+                ctx.lineTo((x + 1) * TILE_WIDTH - tileLeftOffset + xOffset, (y + 1) * TILE_HEIGHT + tileBottomOffset + yOffset)
+                ctx.lineTo(x * TILE_WIDTH - tileLeftOffset + xOffset, (y + 1) * TILE_HEIGHT + tileBottomOffset + yOffset)
+                ctx.closePath()
+                ctx.fill();
+
+                ctx.lineWidth
+                ctx.strokeStyle = "#ffcc00"
+                ctx.beginPath()
+                ctx.moveTo(x * TILE_WIDTH + xOffset, y * TILE_HEIGHT + yOffset)
+                ctx.lineTo(x * TILE_WIDTH - tileLeftOffset + xOffset, y * TILE_HEIGHT + tileBottomOffset + yOffset)
+                ctx.lineTo(x * TILE_WIDTH - tileLeftOffset + xOffset, (y + 1) * TILE_HEIGHT + tileBottomOffset + yOffset)
+                ctx.lineTo(x * TILE_WIDTH + xOffset, (y + 1) * TILE_HEIGHT + yOffset)
+                ctx.closePath()
+                ctx.stroke();
+                ctx.beginPath()
+                ctx.moveTo(x * TILE_WIDTH + xOffset, (y + 1) * TILE_HEIGHT + yOffset)
+                ctx.lineTo((x + 1) * TILE_WIDTH + xOffset, (y + 1) * TILE_HEIGHT + yOffset)
+                ctx.lineTo((x + 1) * TILE_WIDTH - tileLeftOffset + xOffset, (y + 1) * TILE_HEIGHT + tileBottomOffset + yOffset)
+                ctx.lineTo(x * TILE_WIDTH - tileLeftOffset + xOffset, (y + 1) * TILE_HEIGHT + tileBottomOffset + yOffset)
+                ctx.closePath()
+                ctx.stroke();
             }
-            ctx.fillStyle = "#ffe6e6"
-            ctx.beginPath()
-            ctx.moveTo(x * TILE_WIDTH, y * TILE_HEIGHT)
-            ctx.lineTo(x * TILE_WIDTH-6, y * TILE_HEIGHT+6)
-            ctx.lineTo(x * TILE_WIDTH-6, (y+1) * TILE_HEIGHT+6)
-            ctx.lineTo(x * TILE_WIDTH, (y+1) * TILE_HEIGHT)
-            ctx.closePath()
-            ctx.fill();
+        }
 
-            ctx.fillStyle = '#ff9999'
-            ctx.beginPath()
-            ctx.moveTo(x * TILE_WIDTH, (y+1) * TILE_HEIGHT)
-            ctx.lineTo((x+1) * TILE_WIDTH, (y+1) * TILE_HEIGHT)
-            ctx.lineTo((x+1) * TILE_WIDTH-6, (y+1) * TILE_HEIGHT+6)
-            ctx.lineTo(x * TILE_WIDTH-6, (y+1) * TILE_HEIGHT+6)
-            ctx.closePath()
-            ctx.fill();
-
-            ctx.lineWidth
-            ctx.strokeStyle = "#ffcc00"
-            ctx.beginPath()
-            ctx.moveTo(x * TILE_WIDTH, y * TILE_HEIGHT)
-            ctx.lineTo(x * TILE_WIDTH-6, y * TILE_HEIGHT+6)
-            ctx.lineTo(x * TILE_WIDTH-6, (y+1) * TILE_HEIGHT+6)
-            ctx.lineTo(x * TILE_WIDTH, (y+1) * TILE_HEIGHT)
-            ctx.closePath()
-            ctx.stroke();
-            ctx.beginPath()
-            ctx.moveTo(x * TILE_WIDTH, (y+1) * TILE_HEIGHT)
-            ctx.lineTo((x+1) * TILE_WIDTH, (y+1) * TILE_HEIGHT)
-            ctx.lineTo((x+1) * TILE_WIDTH-6, (y+1) * TILE_HEIGHT+6)
-            ctx.lineTo(x * TILE_WIDTH-6, (y+1) * TILE_HEIGHT+6)
-            ctx.closePath()
-            ctx.stroke();
-
-            // ctx.strokeRect(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT)
+        ctx.strokeStyle = "#ffcc00"
+        var xOffset = layer * tileLeftOffset
+        var yOffset = -1 * layer * tileBottomOffset
+        for (var x = 0; x < board[layer].length; x++) {
+            for (var y = 0; y < board[layer][x].length; y++) {
+                if (board[layer][x][y] == undefined) {
+                    continue
+                }
+                ctx.strokeRect(x * TILE_WIDTH + xOffset, y * TILE_HEIGHT + yOffset, TILE_WIDTH, TILE_HEIGHT)
+                ctx.drawImage(document.getElementById("img" + board[layer][x][y]), 1 + x * TILE_WIDTH + xOffset, 1 + y * TILE_HEIGHT + yOffset)
+            }
         }
     }
-
-    ctx.strokeStyle = "#ffcc00"
-    for (var x = 0; x < board.length; x++) {
-        for (var y = 0; y < board[x].length; y++) {
-            if (board[x][y] == undefined) {
-                continue
-            }
-            ctx.strokeRect(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT)
-            ctx.drawImage(document.getElementById("img" + board[x][y]), 1 + x * TILE_WIDTH, 1 + y * TILE_HEIGHT)
-        }
-    }
-
 
     ctx.strokeStyle = "#ffcc00"
     ctx.fillStyle = "#ffcc00"
@@ -211,49 +245,67 @@ var drawCallback = function () {
     ctx.fillText("Time: " + timeElapsed, 600, 36)
     ctx.fillText("Shuffle", 650, 130)
 
-    if(650 - 10 < mouseX && mouseX < 700+10 && 150-10 < mouseY && mouseY < 150+10){
+    if (650 - 10 < mouseX && mouseX < 700 + 10 && 150 - 10 < mouseY && mouseY < 150 + 10) {
         ctx.fillStyle = "#ffee22"
     } else {
         ctx.fillStyle = "#ffcc00"
     }
     ctx.beginPath();
-    ctx.moveTo(700, 150+10)
-    ctx.arc(650, 150, 10, Math.PI/2, 3*Math.PI/2)
-    ctx.lineTo(700, 150-10)
-    ctx.arc(700, 150, 10, 3*Math.PI/2, Math.PI/2)
-    ctx.fill(); 
+    ctx.moveTo(700, 150 + 10)
+    ctx.arc(650, 150, 10, Math.PI / 2, 3 * Math.PI / 2)
+    ctx.lineTo(700, 150 - 10)
+    ctx.arc(700, 150, 10, 3 * Math.PI / 2, Math.PI / 2)
+    ctx.fill();
     // ctx.fillRect(625, 125, 150, 20)
 
     ctx.strokeStyle = "red"
-    if (selectedX != undefined && selectedY != undefined && board[selectedX][selectedY] != undefined) {
+    xOffset = selectedLayer * tileLeftOffset
+    yOffset = -1 * selectedLayer * tileBottomOffset
+    if (selectedX != undefined && selectedY != undefined && selectedLayer != undefined && board[selectedLayer][selectedX][selectedY] != undefined) {
         ctx.beginPath();
         let rad = TILE_WIDTH / 2 + Math.cos(frame / 7) * 2
-        ctx.arc(selectedX * TILE_WIDTH + TILE_WIDTH / 2, selectedY * TILE_HEIGHT + TILE_HEIGHT / 2, rad, 0, 2 * Math.PI)
+        ctx.arc(selectedX * TILE_WIDTH + TILE_WIDTH / 2 + xOffset, selectedY * TILE_HEIGHT + TILE_HEIGHT / 2 + yOffset, rad, 0, 2 * Math.PI)
         ctx.stroke()
     }
 }
 
 var mouseDownCallback = function (e) {
-    if(650 - 10 < mouseX && mouseX < 700+10 && 150-10 < mouseY && mouseY < 150+10){
+    if (650 - 10 < mouseX && mouseX < 700 + 10 && 150 - 10 < mouseY && mouseY < 150 + 10) {
         swapTiles(board)
         return
     }
 
     var tileX = Math.floor(e.x / TILE_WIDTH)
     var tileY = Math.floor(e.y / TILE_HEIGHT)
-    if (board[tileX] != undefined && board[tileX][tileY] != undefined) {
+    for (var layer = board.length - 1; layer >= 0; layer--) {
+        if (board[layer][tileX] != undefined && board[layer][tileX][tileY] != undefined) {
+            tileLayer = layer
+            break
+        }
+    }
+    console.log(tileLayer, tileX, tileY)
+
+    if (tileLayer != undefined && board[tileLayer][tileX] != undefined && board[tileLayer][tileX][tileY] != undefined) {
+        console.log("inside if")
         if (selectedX != undefined &&
-            selectedY != undefined) {
-            if (board[selectedX][selectedY] != undefined &&
+            selectedY != undefined &&
+            selectedLayer != undefined) {
+            console.log("inside if 2")
+            if (board[selectedLayer][selectedX][selectedY] != undefined &&
                 (tileX != selectedX || tileY != selectedY) &&
-                (board[tileX + 1][tileY] == undefined || board[tileX - 1][tileY] == undefined)) {
-                if (board[selectedX][selectedY] == board[tileX][tileY]) {
-                    board[selectedX][selectedY] = undefined
-                    board[tileX][tileY] = undefined
+                (board[tileLayer][tileX + 1][tileY] == undefined || board[tileLayer][tileX - 1][tileY] == undefined)) {
+                console.log("inside if 3")
+                console.log(board[selectedLayer][selectedX][selectedY], board[tileLayer][tileX][tileY])
+                if (board[selectedLayer][selectedX][selectedY] == board[tileLayer][tileX][tileY]) {
+                    console.log("inside if 4")
+                    board[selectedLayer][selectedX][selectedY] = undefined
+                    board[selectedLayer][tileX][tileY] = undefined
                 }
             }
         }
-        if (board[tileX + 1][tileY] == undefined || board[tileX - 1][tileY] == undefined) {
+        if (board[tileLayer][tileX + 1][tileY] == undefined || board[tileLayer][tileX - 1][tileY] == undefined) {
+            console.log("new selection")
+            selectedLayer = tileLayer
             selectedX = tileX
             selectedY = tileY
         }

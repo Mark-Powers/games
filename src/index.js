@@ -58,6 +58,10 @@ function setUpModels() {
       game: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      uuid: {
+        type: Sequelize.STRING,
+        allowNull: false
       }
     })
   }
