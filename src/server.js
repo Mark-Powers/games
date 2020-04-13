@@ -12,18 +12,25 @@ function listen(port) {
     server.listen(port, () => console.info(`Listening on port ${port}!`));
 }
 
+// Load a game and its routes
 function load(gamePath, models, jwtFunctions, database) {
     const game = require(gamePath);
     game.setUpRoutes(server, models, jwtFunctions, database);
 }
 
 function setUpRoutes(models, jwtFunctions, database) {
+    // Route logger
     server.use(function (req, res, next) {
         console.debug(new Date(), req.method, req.originalUrl);
         next()
     })
 
+    // Static files
     server.get('/', (req, res) => res.sendFile(__dirname + "/index.html"))
+    server.get('/highscore.js', (req, res) => res.sendFile(__dirname + "/highscores.js"))
+    server.get('/highscores', (req, res) => res.sendFile(__dirname + "/scores.html"))
+
+    // Sets a score
     server.get('/setScore', async (req, res, next) => {
         var results = await models.scores.findAll({
             where: { uuid: { [Op.eq]: req.query.uuid } }
@@ -40,6 +47,8 @@ function setUpRoutes(models, jwtFunctions, database) {
         })
         res.status(200).send("score saved")
     })
+
+    // Gets all scores, grouped by game
     server.get('/scores', async (req, res, next) => {
         var games = await database.query(`SELECT DISTINCT game FROM scores`, { type: database.QueryTypes.SELECT });
         var scoresByGames = {}
@@ -48,8 +57,8 @@ function setUpRoutes(models, jwtFunctions, database) {
         };
         res.status(200).send(scoresByGames);
     })
-    server.get('/highscore.js', (req, res) => res.sendFile(__dirname + "/highscores.js"))
-    server.get('/highscores', (req, res) => res.sendFile(__dirname + "/scores.html"))
+    
+    // Gets a unique ID
     server.get('/uuid', async (req, res) => {
         var uuid;
         while (true) {
