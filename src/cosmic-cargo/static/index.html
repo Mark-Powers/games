@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<title>Cosmic Cargo</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<style>
+		@font-face {
+			font-family: 'Gameboy';
+			src: url('Assets/font.ttf');
+		}
+		canvas {
+			transform-origin: top left;
+			transform: scale(4, 4);
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+		.desc{
+			position: relative;
+			left: 650px;
+			width: 500px;
+		}
+	</style>
+</head>
+
+<body style="padding:0; margin:0; overflow:hidden;">
+	<canvas id="canvas"></canvas>
+	<script src="audio.js"></script>
+	<script src="events.js"></script>
+	<script src="shop.js"></script>
+	<script src="random.js"></script>
+	<script src="draw.js"></script>
+	<script src="main.js"></script>
+	<script src="/highscore.js"></script>
+
+<div class="desc">
+<p>
+Welcome to Cosmic Cargo! A galactic-scale story generator! Embark on an interplanetary journey where you are tasked to deliver a shipment of goods to a new colony 3000 light years away. Your trip is dangerous, watch out for pirates, dangerous aliens, space anomalies, and more!
+Made for #GBJAM 7. This is the first game any of us in our team have made before. We hope you enjoy!
+</p>
+<p>
+Controls:
+<ul>
+    <li>Arrow keys - Navigate menu items, change volume</li>
+    <li>Z - Select menu option</li>
+    <li>X - Toggle status screen (from main screen)</li>
+	<li>Space/Enter - Toggle options screen (from main screen)</li>
+</ul>
+</p>
+<p><a href="https://seafarerscafe.itch.io/cosmic-cargo">view on itch.io</a></p>
+</div>
+</body>
+
+</html>

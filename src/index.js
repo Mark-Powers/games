@@ -79,6 +79,7 @@ server.load("./snake/server", models, jwtFunctions, database)
 server.load("./stacker/server", models, jwtFunctions, database)
 server.load("./pinball/server", models, jwtFunctions, database)
 server.load("./math/server", models, jwtFunctions, database)
+server.load("./cosmic-cargo/server", models, jwtFunctions, database)
 server.load("./pp/server", models, jwtFunctions, database)
 
 // Start the server

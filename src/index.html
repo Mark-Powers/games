@@ -6,31 +6,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- <link rel="stylesheet" type="text/css" href="/css/styles.css"> -->
+    <style>
+        .mobile::after {
+            content: "*";
+        }
+
+        .score::after {
+            content: "†";
+        }
+
+        body {
+            padding-left: 3%;
+            padding-top: 1%;
+        }
+
+        li {
+            list-style: none;
+            margin-bottom: 3px;
+            font-size: 28px;
+        }
+        .gamesList {
+            margin-left: 3%;
+        }
+    </style>
 </head>
 
 <body>
-    <div>
-        <a href="/highscores">High score list</a>
+    <h1>Games</h1>
+    <div class="gamesList">
+        <div>
+            <h2>Arcade</h2>
+            <ul>
+                <!-- Does not work <li><a href="/pinball">Pinball (demo)</a></li> -->
+                <li><a href="/snake">Snake</a><span class="score"></span></li>
+                <li><a href="/stacker">Stacker</a><span class="score"></span><span class="mobile"></span></li>
+                <li><a href="/math">Math mini games</a></li>
+                <!-- <li><a href="/pp/index.html">Picture pieces</a></li> -->
+                <li><a href="/cosmic-cargo">Cosmic Cargo (itch.io)</a><span class="score"></span></li>
+            </ul>
+        </div>
+        <div>
+            <h2>Multiplayer</h2>
+            <ul>
+                <!-- Does not work <li><a href="/ur">Royal Game of Ur</a></li> -->
+                <li><a href="/quadrowple">Quadrowple</a></li>
+            </ul>
+        </div>
     </div>
-
     <div>
-        <h1>Games</h1>
-        <h2>Arcade</h2>
-        <ul>
-            <li><a href="/pinball">Pinball (demo)</a></li>
-            <li><a href="/snake">Snake</a></li>
-            <li><a href="/stacker">Stacker</a></li>
-            <li><a href="/math">Math mini games</a></li>
-            <li><a href="/pp/index.html">Picture pieces</a></li>
-            <li><a href="https://seafarerscafe.itch.io/cosmic-cargo">Cosmic Cargo (itch.io)</a></li>
-        </ul>
+        <p><span class="mobile"></span> denotes mobile compatible</p>
+        <p><span class="score"></span> denotes on score list</p>
     </div>
     <div>
-        <h2>Multiplayer</h2>
-        <ul>
-            <li><a href="/ur">Royal Game of Ur</a></li>
-            <li><a href="/quadrowple">Quadrowple</a></li>
-        </ul>
+        <h1><a href="/highscores">High Scores</a></h1>
     </div>
 </body>
 

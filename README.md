@@ -1,4 +1,3 @@
-# Quadrowple
+# games.marks.kitchen
 
-Get four in a row to win. Play online with a random person
-
+A website of various games I have worked on. Most are small, acarde style games, or based on board games.
