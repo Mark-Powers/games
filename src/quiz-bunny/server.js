@@ -1,5 +1,6 @@
 const uuidv4 = require('uuid/v4');
 const words = require('./words').words;
+const prompts = require('./prompts').prompts;
 
 function setUpRoutes(server, models, jwtFunctions, database) {
     // simple send files
@@ -15,9 +16,6 @@ function setUpRoutes(server, models, jwtFunctions, database) {
         OVER: 2,
         WAITING: 3,
     }
-    setInterval(function(){
-        console.log(games)
-    }, 3000)
 
     // generates a game code
     function generateGameCode() {
@@ -54,7 +52,10 @@ function setUpRoutes(server, models, jwtFunctions, database) {
         return game.players.find(player => player.cookie == cookie)
     }
     function getPlayerNames(players) {
-        return players.map(player => player.name)
+        // return players.map(player => player.name)
+        return players.map(player => { 
+            return {name: player.name, ready: player.ready}
+        })
     }
     // Turn the game into a public game object (no cookies, etc.)
     function getPublicGame(cookie) {
@@ -65,6 +66,7 @@ function setUpRoutes(server, models, jwtFunctions, database) {
             let isHost = cookie == game.host
             let username = game.players.find(player => player.cookie == cookie).name
             let players = getPlayerNames(game.players)
+            // console.log(players)
             var newGame = {
                 host: isHost,
                 players: players,
@@ -76,12 +78,28 @@ function setUpRoutes(server, models, jwtFunctions, database) {
             if (game.state == STATES.TYPING) {
                 newGame.submitted = game.answers.some(answer => answer.cookie == cookie)
                 newGame.prompt = game.prompts[game.round]
+                newGame.players.forEach(player => {
+                    var playerWithCookie = game.players.find(p => {
+                        return p.name == player.name
+                    })
+                    if(game.answers.some(answer => answer.cookie == playerWithCookie.cookie)){
+                        player.ready = true
+                    } else {
+                        player.ready = false
+                    }
+                })
             } else if (game.state == STATES.VOTING) {
                 newGame.answers = game.answers.map(answer => answer.text)
                 newGame.prompt = game.prompts[game.round]
                 var game = findGameByCookie(cookie)
                 var player = findPlayerByCookie(game, cookie)
                 newGame.voted = player.voted
+                newGame.players.forEach(player => {
+                    var playerWithCookie = game.players.find(p => {
+                        return p.name == player.name
+                    })
+                    player.ready = playerWithCookie.voted
+                })
             } else if (game.state == STATES.WAITING) {
                 newGame.answers = game.answers.map(answer => {
                     return { text: answer.text, voteCount: answer.votes.length }
@@ -102,17 +120,46 @@ function setUpRoutes(server, models, jwtFunctions, database) {
             return newGame
         }
     }
+    function shuffle(a) {
+        var j, x, i;
+        for (i = a.length - 1; i > 0; i--) {
+            j = Math.floor(Math.random() * (i + 1));
+            x = a[i];
+            a[i] = a[j];
+            a[j] = x;
+        }
+        return a;
+    }
+    function getRandomPlayer(stack, playersList){
+        if(stack.length == 0){
+            for(var i = 0; i < playersList.length; i++){
+                stack.push(playersList[i])
+            }
+            shuffle(stack)
+        }
+        return stack.shift()
+    }
     // gets a game prompt
-    function getPrompts(players) {
-        // temporary hard coded 2 rounds
-        return [`What would ${players[0]} eat for breakfast?`, `What would ${players[1]} be famous for?`]
+    function getPrompts(playerNames, size) {
+        var gamePrompts = []
+        var stack = []
+        for(var i = 0; i < size; i++){
+            var randomIndex = Math.floor(Math.random() * prompts.length)
+            var prompt =  prompts[randomIndex]
+            while(prompt.includes("@")){
+                prompt = prompt.replace("@", getRandomPlayer(stack, playerNames))
+            }
+            gamePrompts.push(prompt)
+        }
+        return gamePrompts
     }
     // marks the game as started
     function startGame(cookie) {
         let game = games.find(el => el.host == cookie)
-        if (game) {
+        if (game && game.players.length >= 2) {
             game.gameStarted = true
-            game.prompts = getPrompts(getPlayerNames(game.players))
+            var playerNames = game.players.map(player => player.name)
+            game.prompts = getPrompts(playerNames, 8)
             game.round = 0;
             game.players.forEach(player => {
                 player.score = 0
@@ -174,11 +221,12 @@ function setUpRoutes(server, models, jwtFunctions, database) {
     function voteFor(cookie, answerIndex) {
         let game = findGameByCookie(cookie)
         let playerWhoVoted = findPlayerByCookie(game, cookie)
-        if (playerWhoVoted.voted) {
+        let answer = game.answers[answerIndex]
+        // If already voted, or voted for self, ignore
+        if (playerWhoVoted.voted || answer.cookie == cookie) {
             return false
         }
         playerWhoVoted.voted = true
-        let answer = game.answers[answerIndex]
         answer.votes.push(playerWhoVoted)
         game.voteCount++
         if (game.voteCount == game.players.length) {

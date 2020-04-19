@@ -15,6 +15,9 @@ window.onload = function () {
             interval: undefined
         },
         methods: {
+            nonReady: function (players) {
+                return players.filter(player => !player.ready)
+              },
             startStatusLoop: function(){
                 // event loop that runs while waiting for host to start
                 var loadStatus = function (vue_object) {

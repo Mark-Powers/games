@@ -27,7 +27,8 @@
                         :disabled="username.length == 0">
                 </div>
                 <div>
-                    <input type="text" placeholder="game code" v-model="gameCode" style="width: 250px;" v-on:keyup.enter="joinGame">
+                    <input type="text" placeholder="game code" v-model="gameCode" style="width: 250px;"
+                        v-on:keyup.enter="joinGame">
                     <input type="button" value="Join game" v-on:click="joinGame"
                         :disabled="username.length == 0 || gameCode.length == 0">
                 </div>
@@ -39,7 +40,7 @@
                 <h2>{{game.gameCode}}</h2>
                 <h1>Players</h1>
                 <ul v-for="player in game.players">
-                    <li>{{player}}</li>
+                    <li>{{player.name}}</li>
                 </ul>
                 <div v-if="game.host">
                     <input type="button" value="Start game" v-on:click="startGame">
@@ -49,15 +50,33 @@
                 <div v-if="game.state == STATES.TYPING" class="typing">
                     <h1>Answer:</h1>
                     <h2>{{game.prompt}}</h2>
-                    <input type="text" placeholder="answer" v-model="submitText" :disabled="game.submitted" v-on:keyup.enter="submitAnswer">
+                    <input type="text" placeholder="answer" v-model="submitText" :disabled="game.submitted"
+                        v-on:keyup.enter="submitAnswer">
                     <input type="button" value="Submit" v-on:click="submitAnswer" :disabled="submitText.length == 0"
                         v-if="!game.submitted">
+                    <div class="readyList">
+                        <h4>Waiting:</h4>
+                        <ul>
+                            <li v-for="player in nonReady(game.players)">
+                                {{player.name}}
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div v-if="game.state == STATES.VOTING" class="voting">
                     <h1>Vote:</h1>
                     <h2>{{game.prompt}}</h2>
                     <div v-for="(answer, i) in game.answers">
-                        <input style="width: 100%" type="button" :value="answer" v-on:click="submitVote(i)" :disabled="game.voted">
+                        <input style="width: 100%" type="button" :value="answer" v-on:click="submitVote(i)"
+                            :disabled="game.voted">
+                    </div>
+                    <div class="readyList">
+                        <h4>Waiting:</h4>
+                        <ul>
+                            <li v-for="player in nonReady(game.players)">
+                                {{player.name}}
+                            </li>
+                        </ul>
                     </div>
                 </div>
                 <div v-if="game.state == STATES.WAITING" class="waiting">
@@ -67,11 +86,20 @@
                         <span>{{answer.text}}</span><span>{{answer.voteCount}} votes</span>
                     </div>
                     <input type="button" value="Ready" v-on:click="ready" :disabled="game.ready">
+                    <div class="readyList">
+                        <h4>Waiting:</h4>
+                        <ul>
+                            <li v-for="player in nonReady(game.players)">
+                                {{player.name}}
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div v-if="game.state == STATES.OVER">
                     <h1>Scores:</h1>
                     <ol>
-                        <li v-for="(score, i) in game.scores"><span>{{score.name}}</span><span>{{score.score}}</span></li>
+                        <li v-for="(score, i) in game.scores"><span>{{score.name}}</span><span>{{score.score}}</span>
+                        </li>
                     </ol>
                     <input type="button" value="Leave" v-on:click="leave">
                 </div>

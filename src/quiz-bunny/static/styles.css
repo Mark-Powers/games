@@ -17,6 +17,7 @@ input[type=button]{
     cursor: pointer;
     background-color: coral;
     color: white;
+    white-space: normal; 
 }
 input[type=button]:disabled {
     color: #eeeeee;
