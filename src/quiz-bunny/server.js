@@ -7,6 +7,7 @@ function setUpRoutes(server, models, jwtFunctions, database) {
     server.get('/quiz-bunny', (req, res) => res.sendFile(__dirname + "/index.html"))
     server.get('/quiz-bunny/main.js', (req, res) => res.sendFile(__dirname + "/static/main.js"))
     server.get('/quiz-bunny/styles.css', (req, res) => res.sendFile(__dirname + "/static/styles.css"))
+    server.get('/quiz-bunny/bunny.jpg', (req, res) => res.sendFile(__dirname + "/static/bunny.jpg"))
 
     // a list of games
     var games = []

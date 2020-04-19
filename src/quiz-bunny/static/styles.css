@@ -1,3 +1,13 @@
+body {
+    background-image: url("/quiz-bunny/bunny.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+}
+h1, h2, h3, h4, li, span {
+    text-shadow: 0px 0px 5px #000;
+    color: white;
+}
+
 .center{
     margin: auto;
     width: 350px;
@@ -18,17 +28,20 @@ input[type=button]{
     background-color: coral;
     color: white;
     white-space: normal; 
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
 }
 input[type=button]:disabled {
     color: #eeeeee;
     background-color: #dddddd;
 }
 input[type=button]:disabled:hover {
-    box-shadow: none;
-    cursor: default
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    cursor: default;
+    background-color: #dddddd;
 }
 input[type=button]:hover{
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)
+    box-shadow: 0 5px 10px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    background-color: rgb(255, 179, 151);
 }
 span {
     margin-right: 1em;
