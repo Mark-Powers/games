@@ -34,7 +34,8 @@ function setUpRoutes(server, models, jwtFunctions, database) {
         return {
             host: hostCookie,
             players: [{ cookie: hostCookie, name: hostName }],
-            gameCode: gameCode
+            gameCode: gameCode,
+            maxRound: 8
         }
     }
     // adds a player to a game object
@@ -54,8 +55,8 @@ function setUpRoutes(server, models, jwtFunctions, database) {
     }
     function getPlayerNames(players) {
         // return players.map(player => player.name)
-        return players.map(player => { 
-            return {name: player.name, ready: player.ready}
+        return players.map(player => {
+            return { name: player.name, ready: player.ready }
         })
     }
     // Turn the game into a public game object (no cookies, etc.)
@@ -74,7 +75,9 @@ function setUpRoutes(server, models, jwtFunctions, database) {
                 name: username,
                 gameCode: game.gameCode,
                 gameStarted: game.gameStarted,
-                state: game.state
+                state: game.state,
+                round: game.round,
+                maxRound: game.maxRound
             }
             if (game.state == STATES.TYPING) {
                 newGame.submitted = game.answers.some(answer => answer.cookie == cookie)
@@ -83,7 +86,7 @@ function setUpRoutes(server, models, jwtFunctions, database) {
                     var playerWithCookie = game.players.find(p => {
                         return p.name == player.name
                     })
-                    if(game.answers.some(answer => answer.cookie == playerWithCookie.cookie)){
+                    if (game.answers.some(answer => answer.cookie == playerWithCookie.cookie)) {
                         player.ready = true
                     } else {
                         player.ready = false
@@ -103,7 +106,12 @@ function setUpRoutes(server, models, jwtFunctions, database) {
                 })
             } else if (game.state == STATES.WAITING) {
                 newGame.answers = game.answers.map(answer => {
-                    return { text: answer.text, voteCount: answer.votes.length }
+                    return {
+                        text: answer.text,
+                        voteCount: answer.votes.length,
+                        voteNames: answer.votes.map(vote => vote.name),
+                        name: findPlayerByCookie(game, answer.cookie).name
+                    }
                 })
                 newGame.prompt = game.prompts[game.round]
                 var game = findGameByCookie(cookie)
@@ -114,7 +122,7 @@ function setUpRoutes(server, models, jwtFunctions, database) {
                     return { name: player.name, score: player.score }
                 })
                 // sort
-                scores.sort((a,b) => b.score - a.score); 
+                scores.sort((a, b) => b.score - a.score);
                 newGame.scores = scores
             }
 
@@ -131,9 +139,9 @@ function setUpRoutes(server, models, jwtFunctions, database) {
         }
         return a;
     }
-    function getRandomPlayer(stack, playersList){
-        if(stack.length == 0){
-            for(var i = 0; i < playersList.length; i++){
+    function getRandomPlayer(stack, playersList) {
+        if (stack.length == 0) {
+            for (var i = 0; i < playersList.length; i++) {
                 stack.push(playersList[i])
             }
             shuffle(stack)
@@ -144,13 +152,15 @@ function setUpRoutes(server, models, jwtFunctions, database) {
     function getPrompts(playerNames, size) {
         var gamePrompts = []
         var stack = []
-        for(var i = 0; i < size; i++){
+        while (gamePrompts.length < size) {
             var randomIndex = Math.floor(Math.random() * prompts.length)
-            var prompt =  prompts[randomIndex]
-            while(prompt.includes("@")){
+            var prompt = prompts[randomIndex]
+            while (prompt.includes("@")) {
                 prompt = prompt.replace("@", getRandomPlayer(stack, playerNames))
             }
-            gamePrompts.push(prompt)
+            if (gamePrompts.indexOf(prompt) == -1) {
+                gamePrompts.push(prompt)
+            }
         }
         return gamePrompts
     }
@@ -160,7 +170,7 @@ function setUpRoutes(server, models, jwtFunctions, database) {
         if (game && game.players.length >= 2) {
             game.gameStarted = true
             var playerNames = game.players.map(player => player.name)
-            game.prompts = getPrompts(playerNames, 8)
+            game.prompts = getPrompts(playerNames, game.maxRound)
             game.round = 0;
             game.players.forEach(player => {
                 player.score = 0
@@ -346,7 +356,7 @@ function setUpRoutes(server, models, jwtFunctions, database) {
         } else {
             var game = findGameByCookie(cookie)
             game.players = game.players.filter(player => player.cookie != cookie)
-            if(game.players.length == 0){
+            if (game.players.length == 0) {
                 games = games.filter(g => g != game)
             }
             res.status(200).send()

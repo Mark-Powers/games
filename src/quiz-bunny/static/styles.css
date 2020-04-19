@@ -1,6 +1,6 @@
 body {
     background-image: url("/quiz-bunny/bunny.jpg");
-    background-position: center;
+    background-position: center top;
     background-repeat: no-repeat;
 }
 h1, h2, h3, h4, li, span {
@@ -8,9 +8,15 @@ h1, h2, h3, h4, li, span {
     color: white;
 }
 
+td, th{
+    text-align: left;
+    background-color: white;
+    color: black;
+}
+
 .center{
     margin: auto;
-    width: 350px;
+    width: 400px;
     padding: 10px;
 }
 input {

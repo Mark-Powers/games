@@ -20,14 +20,14 @@
             </h1>
             <div>
                 <div>
-                    <input style="width: 340px;" type="text" placeholder="username" v-model="username">
+                    <input style="width: 390px;" type="text" placeholder="username" v-model="username">
                 </div>
                 <div>
                     <input style="width: 100%;" type="button" value="Host game" v-on:click="hostGame"
                         :disabled="username.length == 0">
                 </div>
                 <div>
-                    <input type="text" placeholder="game code" v-model="gameCode" style="width: 250px;"
+                    <input type="text" placeholder="game code" v-model="gameCode" style="width: 300px;"
                         v-on:keyup.enter="joinGame">
                     <input type="button" value="Join game" v-on:click="joinGame"
                         :disabled="username.length == 0 || gameCode.length == 0">
@@ -47,6 +47,7 @@
                 </div>
             </div>
             <div v-else>
+                <h1>{{game.round+1}}/{{game.maxRound}}</h1>
                 <div v-if="game.state == STATES.TYPING" class="typing">
                     <h1>Answer:</h1>
                     <h2>{{game.prompt}}</h2>
@@ -82,9 +83,20 @@
                 <div v-if="game.state == STATES.WAITING" class="waiting">
                     <h1>Results:</h1>
                     <h2>{{game.prompt}}</h2>
-                    <div v-for="(answer, i) in game.answers">
-                        <span>{{answer.text}}</span><span>{{answer.voteCount}} votes</span>
-                    </div>
+                    <table>
+                        <tr>
+                            <th>Answer</th>
+                            <th>Author</th>
+                            <th>Votes</th>
+                            <th>Endorsements</th>
+                        </tr>
+                        <tr v-for="(answer, i) in game.answers">
+                            <td>{{answer.text}}</td>
+                            <td>{{answer.name}}</td>
+                            <td>{{answer.voteCount}}</td>
+                            <td><p v-for="name in answer.voteNames">{{name}}</p></td>
+                        </tr>
+                    </table>
                     <input type="button" value="Ready" v-on:click="ready" :disabled="game.ready">
                     <div class="readyList">
                         <h4>Waiting:</h4>

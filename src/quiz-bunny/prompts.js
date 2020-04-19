@@ -30,7 +30,7 @@ var prompts = [
     "What is @'s favorite TV show?",
     "If @ was the host of a reality TV show, what would it be about?",
     "What is the last song @ listened to?",
-    "What is @'s go to restaurant owner?",
+    "What is @'s go to restaurant order?",
     "What would @ cook for a dinner party?",
     "What is the coolest thing @ has done?",
     "What is at the top of @'s grocery list?",
