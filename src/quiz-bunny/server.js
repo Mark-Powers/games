@@ -204,6 +204,7 @@ function setUpRoutes(server, models, jwtFunctions, database) {
         game.answers.forEach(answer => {
             answer.votes = []
         })
+        shuffle(game.answers)
         game.voteCount = 0
     }
     function endVoting(game) {
