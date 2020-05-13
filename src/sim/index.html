@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Sim</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="/sim/styles.css">
+</head>
+
+<body style="padding:0; margin:0; overflow:hidden;">
+    <div>
+        <div>Population: <span id="population"></span></div>
+        <div>Gold: <span id="gold"></span></div>
+        <div>Resources: <span id="resources"></span></div>
+        <button onclick="status = ''; update()">Update</button>
+    </div>
+    <canvas id="canvas"></canvas>
+    <div id="status"></div>
+    <div id="shopDiv"></div>
+    <script src="/highscore.js"></script>
+    <script src="/sim/tiles.js"></script>
+    <script src="/sim/items.js"></script>
+    <script>
+        var score;
+        var username = undefined
+
+        var populationEl = document.getElementById("population")
+        var goldEl = document.getElementById("gold")
+        var shopEl = document.getElementById("shopDiv")
+        var statusEl = document.getElementById("status")
+        var resourceEl = document.getElementById("resources")
+
+        var population, gold, resources;
+        var shopItems = [];
+        var queuedTile
+
+        var width = 10
+        var height = 10
+        var tileSize = 40;
+        var status = ""
+
+        var t
+        var eventQueue
+
+        var level
+        window.onload = function () {
+            canvas = document.getElementById("canvas");
+            canvas.width = width * tileSize
+            canvas.height = height * tileSize
+            ctx = canvas.getContext("2d");
+            document.addEventListener("keydown", keyPush);
+            document.addEventListener("click", mouseClick);
+            init();
+            draw()
+        }
+        function init() {
+            score = 0
+            level = []
+
+            for (var i = 0; i < width; i++) {
+                var row = []
+                for (var j = 0; j < height; j++) {
+                    row.push(undefined)
+                }
+                level.push(row)
+            }
+            level[Math.floor(width / 2)][Math.floor(height / 2)] = new Town()
+
+            population = 10
+            gold = 5
+            resources = 0
+
+            t = 0
+            eventQueue = {
+                5: getScout(),
+                15: getScout(),
+                20: getScout(),
+                30: getScout(),
+            }
+            addShopItem(getScout())
+        }
+        function draw() {
+            ctx.fillStyle = "#009900"
+            ctx.fillRect(0, 0, width * tileSize, height * tileSize)
+            for (var i = 0; i < width; i++) {
+                var row = level[i]
+                for (var j = 0; j < height; j++) {
+                    if (row[j]) {
+                        row[j].draw(i, j, tileSize)
+                    }
+                }
+            }
+            for (var i = 0; i <= height; i++) {
+                ctx.strokeStyle = "#aaa"
+                ctx.moveTo(0, i * tileSize)
+                ctx.lineTo(tileSize * width, i * tileSize)
+                ctx.stroke()
+            }
+            for (var i = 0; i <= width; i++) {
+                ctx.strokeStyle = "#aaa"
+                ctx.moveTo(i * tileSize, 0)
+                ctx.lineTo(i * tileSize, tileSize * height)
+                ctx.stroke()
+            }
+
+            populationEl.innerText = population
+            goldEl.innerText = gold
+            statusEl.innerText = status
+            resourceEl.innerText = resources
+        }
+        function update() {
+            t++
+            for (var i = 0; i < width; i++) {
+                var row = level[i]
+                for (var j = 0; j < height; j++) {
+                    if (row[j]) {
+                        processUpdate(row[j].update())
+                    }
+                }
+            }
+            if(eventQueue[t]){
+                addShopItem(eventQueue[t])
+            }
+
+            draw()
+        }
+        function keyPush(e) {
+            status = ""
+            update()
+        }
+        function mouseClick(e) {
+            if(queuedTile){
+                var x = Math.floor((e.x - canvas.offsetLeft) / tileSize)
+                var y = Math.floor((e.y - canvas.offsetTop) / tileSize)
+                if(x < 0 || width <= x || y < 0 || height <= y){
+                    return
+                }
+                if(level[x][y] == undefined){
+                    level[x][y] = queuedTile
+                    status = `You placed the ${queuedTile.name}`
+                    queuedTile = undefined
+                } else {
+                    status = `You cannot place a tile there.`
+                }
+                update()
+            }
+        }
+        function addShopItem(item){
+            shopItems.push(item)
+
+            var newButton = document.createElement("button")
+            newButton.innerText = item.text + ": " + item.cost
+            newButton.id = item.id
+            newButton.onclick = function(){
+                if(item.cost <= gold){
+                    shopItems = shopItems.filter(it => it.id != item.id)
+                    shopDiv.removeChild(newButton)
+                    gold -= item.cost
+                    processUpdate(item.callback())
+                } else {
+                    status = "not enough gold"
+                }
+                update()
+            }
+            shopDiv.appendChild(newButton)
+            update()
+        }
+        function processUpdate(response){
+            if(response.tile){
+                queuedTile = response.tile
+            } else if(response.gold){
+                gold += response.gold
+            } else if(response.population){
+                population += response.population
+            } else if(response.resources){
+                resources += response.resources
+            }
+        } 
+    </script>
+</body>
+
+</html>

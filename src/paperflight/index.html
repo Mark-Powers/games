@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Paper Flight</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="/paperflight/styles.css">
+</head>
+
+<body style="padding:0; margin:0; overflow:hidden;">
+    <canvas id="canvas"></canvas>
+    <script src="/highscore.js"></script>
+    <script>
+        var width = 800
+        var height = 600
+        var fps = 60
+    </script>
+    <script src="/paperflight/update.js"></script>
+    <script src="/paperflight/draw.js"></script>
+    <script src="/paperflight/levels.js"></script>
+    <script>
+        var username = undefined
+
+        var score, plane, gameInterval, currLevelIndex, currLevel, t, collected, startLevel
+
+        var DEFAULT_VX = 3
+        var DEFAULT_VY = 0.5
+        var UP_VX = 1
+        var UP_VY = 0.1
+        var DOWN_VX = 5
+        var DOWN_VY = 2
+
+        window.onload = function () {
+            canvas = document.getElementById("canvas");
+            canvas.width = width
+            canvas.height = height
+            ctx = canvas.getContext("2d");
+            document.addEventListener("keydown", keyDown);
+            document.addEventListener("keyup", keyUp);
+            document.addEventListener("click", mouseClick);
+            init();
+            draw()
+        }
+        function init() {
+            if (gameInterval) {
+                clearInterval(gameInterval)
+            }
+            score = 0
+            t = 0
+            plane = {
+                x: 30,
+                y: height / 4,
+                vx: DEFAULT_VX,
+                vy: DEFAULT_VY,
+                width: 30,
+                height: 10,
+                dir: 1
+            }
+            setLevel(1)
+            gameInterval = window.setInterval(function () {
+                update();
+                draw()
+            }, 1000 / fps)
+        }
+        function setLevel(to) {
+            currLevelIndex = to
+            currLevel = levels[currLevelIndex]
+            currLevel.items = currLevel.items.slice()
+            collected = 0
+            startLevel = false
+        }
+        function atExit() {
+            return (Math.sqrt(Math.pow(plane.x - currLevel.exit.x, 2) + Math.pow(plane.y - currLevel.exit.y, 2)) < 20
+                || Math.sqrt(Math.pow(plane.x + plane.width - currLevel.exit.x, 2) + Math.pow(plane.y - currLevel.exit.y, 2)) < 20)
+                && collected >= currLevel.coinsNeeded
+        }
+        function gameOver() {
+            ctx.font = "20px Courier"
+            ctx.fillStyle = "black"
+            ctx.fillText("Game Over!", 200, 200);
+            window.clearInterval(gameInterval)
+        }
+        function keyDown(e) {
+            startLevel = true
+            switch (e.key) {
+                case "ArrowLeft": // LEFT
+                    plane.dir = -1
+                    break;
+                case "ArrowRight": // RIGHT
+                    plane.dir = 1
+                    break;
+                case "ArrowUp":
+                    plane.vx = UP_VX
+                    plane.vy = UP_VY
+                    break;
+                case "ArrowDown":
+                    plane.vx = DOWN_VX
+                    plane.vy = DOWN_VY
+                    break;
+                case "R":
+                case "r":
+                    init()
+                    break;
+
+            }
+        }
+        function keyUp(e) {
+            switch (e.key) {
+                case "ArrowUp":
+                case "ArrowDown":
+                    plane.vx = DEFAULT_VX
+                    plane.vy = DEFAULT_VY
+                    break;
+            }
+        }
+        function mouseClick(e) {
+            console.log(e.x, e.y)
+        }
+    </script>
+</body>
+
+</html>

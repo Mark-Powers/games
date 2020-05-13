@@ -82,6 +82,8 @@ server.load("./math/server", models, jwtFunctions, database)
 server.load("./cosmic-cargo/server", models, jwtFunctions, database)
 server.load("./quiz-bunny/server", models, jwtFunctions, database)
 server.load("./pp/server", models, jwtFunctions, database)
+server.load("./sim/server", models, jwtFunctions, database)
+server.load("./paperflight/server", models, jwtFunctions, database)
 
 // Start the server
 server.listen(config.port);
