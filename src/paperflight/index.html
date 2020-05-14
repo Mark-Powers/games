@@ -69,6 +69,11 @@
             currLevelIndex = to
             currLevel = levels[currLevelIndex]
             currLevel.items = currLevel.items.slice()
+            currLevel.items.forEach(item => {
+                if("collected" in item){
+                    item.collected = false
+                }
+            })
             collected = 0
             switchState = 0
             startLevel = false

@@ -82,10 +82,12 @@ function drawRamp() {
     ctx.fill()
 }
 function drawCoin() {
-    ctx.fillStyle = "yellow"
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
-    ctx.fill()
+    if (!this.collected) {
+        ctx.fillStyle = "yellow"
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+        ctx.fill()
+    }
 }
 function drawExit(exit) {
     ctx.fillStyle = "green"

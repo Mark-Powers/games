@@ -15,6 +15,7 @@ function constructCoin(x, y, radius=10){
     return {
         draw: drawCoin,
         update: updateCoin,
+        collected: false,
         x, y, radius
     }
 }

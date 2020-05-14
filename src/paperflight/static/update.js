@@ -14,7 +14,6 @@ function update() {
     currLevel.items.forEach(item => {
         item.update()
     })
-    currLevel.items = currLevel.items.filter(item => !item.collected)
     if (atExit()) {
         console.log("exit!")
     }
@@ -22,10 +21,11 @@ function update() {
 function updateVent() {
     // Custom box since vent height is upwards
     if (isPlaneInBox({
-        x: this.x, 
-        y: this.y-this.height, 
-        width: this.width, 
-        height: this.height})) {
+        x: this.x,
+        y: this.y - this.height,
+        width: this.width,
+        height: this.height
+    })) {
         plane.y -= 2
     }
 }
@@ -43,15 +43,16 @@ function updateRamp() {
     }
 }
 function updateCoin() {
-    if (Math.sqrt(Math.pow(plane.x - this.x, 2) + Math.pow(plane.y - this.y, 2)) < this.radius
-        || Math.sqrt(Math.pow(plane.x + plane.width - this.x, 2) + Math.pow(plane.y - this.y, 2)) < this.radius) {
+    if (!this.collected
+        && (Math.sqrt(Math.pow(plane.x - this.x, 2) + Math.pow(plane.y - this.y, 2)) < this.radius
+            || Math.sqrt(Math.pow(plane.x + plane.width - this.x, 2) + Math.pow(plane.y - this.y, 2)) < this.radius)) {
         this.collected = true
         collected++
     }
 }
 function updateSwitch() {
-    if(isPlaneInBox(this)){
-        if(!this.inBox){
+    if (isPlaneInBox(this)) {
+        if (!this.inBox) {
             this.inBox = true
             switchState = (switchState + 1) % this.stateCount
         }
@@ -60,7 +61,7 @@ function updateSwitch() {
     }
 }
 function updateSwitchRect() {
-    if(isPlaneInBox(this) && switchState == this.state){
+    if (isPlaneInBox(this) && switchState == this.state) {
         gameOver()
     }
 }
