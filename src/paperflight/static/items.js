@@ -47,3 +47,11 @@ function constructRect(x, y, width, height, state){
         x, y, width, height, state
     }
 }
+function constructText(x, y, text, font){
+    return {
+        draw: drawText,
+        update: () => {},
+        style: "black",
+        x, y, text, font
+    }
+}

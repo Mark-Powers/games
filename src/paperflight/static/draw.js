@@ -14,7 +14,7 @@ function draw() {
     ctx.fillStyle = "#222"
     ctx.font = "20px Courier"
     ctx.fillText(`Level ${currLevelIndex} (${collected}/${currLevel.coinsNeeded}) - ${currLevel.title} - Time ${Math.round(t / fps / 60)}:${Math.round(t / fps) % 60}`, 20, 20)
-    
+
     if(gameIsOver){
         ctx.font = "20px Courier"
         ctx.fillStyle = "black"
@@ -94,7 +94,12 @@ function drawCoin() {
     }
 }
 function drawExit(exit) {
-    ctx.fillStyle = "green"
+    if(collected >= currLevel.coinsNeeded){
+        ctx.fillStyle = "green"
+    } else {
+        ctx.fillStyle = "red"
+    }
+    
     ctx.beginPath()
     ctx.arc(exit.x, exit.y, 20, 0, Math.PI * 2)
     ctx.fill()
@@ -119,4 +124,9 @@ function drawSwitchRect() {
         ctx.stroke()
         ctx.setLineDash([]);
     }
+}
+function drawText(){
+    ctx.fillStyle = this.style
+    ctx.font = this.font
+    ctx.fillText(this.text, this.x, this.y)
 }

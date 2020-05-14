@@ -73,6 +73,7 @@
             plane.y = 100
             plane.dir= 1
             currLevelIndex = to
+            collected = 0
             if (to in levels) {
                 currLevel = levels[currLevelIndex]
                 currLevel.items = currLevel.items.slice()
@@ -81,7 +82,6 @@
                         item.collected = false
                     }
                 })
-                collected = 0
                 switchState = 0
                 startLevel = false
             } else {
