@@ -1,5 +1,50 @@
 var levels = {
     1: {
+        coinsNeeded: 0,
+        exit: {
+            x: 40,
+            y: 460
+        },
+        title: "Switch madness",
+        items: [{
+            draw: drawSwitch,
+            update: updateSwitch,
+            x: 120,
+            y: 400,
+            width: 60,
+            height: 60,
+            stateCount: 3
+        },
+        {
+            draw: drawSwitchRect,
+            update: updateSwitchRect,
+            x: 300,
+            y: 400,
+            width: 60,
+            height: 60,
+            state: 0
+        },
+        {
+            draw: drawSwitchRect,
+            update: updateSwitchRect,
+            x: 400,
+            y: 400,
+            width: 60,
+            height: 60,
+            state: 1
+        },
+        {
+            draw: drawSwitchRect,
+            update: updateSwitchRect,
+            x: 500,
+            y: 400,
+            width: 60,
+            height: 60,
+            state: 2
+        },
+        ]
+    },
+    2: {
         coinsNeeded: 5,
         exit: {
             x: 40,

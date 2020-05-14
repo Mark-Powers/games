@@ -48,7 +48,6 @@
             }
             score = 0
             t = 0
-            switchState = 0
             plane = {
                 x: 30,
                 y: height / 4,
@@ -69,6 +68,7 @@
             currLevel = levels[currLevelIndex]
             currLevel.items = currLevel.items.slice()
             collected = 0
+            switchState = 0
             startLevel = false
         }
         function atExit() {

@@ -2,11 +2,12 @@ function draw() {
     ctx.fillStyle = "#4444ff"
     ctx.fillRect(0, 0, width, height)
 
-    drawPlane()
     currLevel.items.forEach(item => {
         item.draw()
     })
     drawExit(currLevel.exit)
+    
+    drawPlane()
 
     ctx.fillStyle = "#222"
     ctx.font = "20px Courier"
@@ -85,8 +86,11 @@ function drawSwitchRect(){
         ctx.setLineDash([5, 5]);
         ctx.beginPath()
         ctx.moveTo(this.x, this.y)
+        ctx.lineTo(this.x + this.width, this.y)
         ctx.lineTo(this.x + this.width, this.y + this.height)
-        ctx.lineTo(this.x + this.width, this.y + this.height)
+        ctx.lineTo(this.x, this.y + this.height)
         ctx.lineTo(this.x, this.y)
+        ctx.stroke()
+        ctx.setLineDash([]);
     }
 }
