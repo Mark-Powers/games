@@ -85,16 +85,7 @@
                 switchState = 0
                 startLevel = false
             } else {
-                currLevel = {
-                    title: "YOU WIN!",
-                    coinsNeeded: 0,
-                    exit: {
-                        x: -100,
-                        y: -100,
-                        radius: 0
-                    },
-                    items: []
-                }
+                currLevel = createLevel("YOU WIN!", 0, -100, -100)
             }
         }
         function atExit() {
