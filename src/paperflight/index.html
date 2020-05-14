@@ -24,7 +24,9 @@
     <script>
         var username = undefined
 
-        var score, plane, gameInterval, currLevelIndex, currLevel, t, collected, startLevel, switchState
+        var score, plane, gameInterval, currLevelIndex,
+            currLevel, t, collected, startLevel, switchState,
+            gameIsOver
 
         var DEFAULT_VX = 3
         var DEFAULT_VY = 0.5
@@ -48,11 +50,12 @@
             if (gameInterval) {
                 clearInterval(gameInterval)
             }
+            gameIsOver = false
             score = 0
             t = 0
             plane = {
                 x: 30,
-                y: height / 4,
+                y: 100,
                 vx: DEFAULT_VX,
                 vy: DEFAULT_VY,
                 width: 30,
@@ -66,28 +69,39 @@
             }, 1000 / fps)
         }
         function setLevel(to) {
+            plane.x = 30
+            plane.y = 100
+            plane.dir= 1
             currLevelIndex = to
-            currLevel = levels[currLevelIndex]
-            currLevel.items = currLevel.items.slice()
-            currLevel.items.forEach(item => {
-                if("collected" in item){
-                    item.collected = false
+            if (to in levels) {
+                currLevel = levels[currLevelIndex]
+                currLevel.items = currLevel.items.slice()
+                currLevel.items.forEach(item => {
+                    if ("collected" in item) {
+                        item.collected = false
+                    }
+                })
+                collected = 0
+                switchState = 0
+                startLevel = false
+            } else {
+                currLevel = {
+                    title: "YOU WIN!",
+                    coinsNeeded: 0,
+                    exit: {
+                        x: -100,
+                        y: -100,
+                        radius: 0
+                    },
+                    items: []
                 }
-            })
-            collected = 0
-            switchState = 0
-            startLevel = false
+            }
         }
         function atExit() {
-            return (Math.sqrt(Math.pow(plane.x - currLevel.exit.x, 2) + Math.pow(plane.y - currLevel.exit.y, 2)) < 20
-                || Math.sqrt(Math.pow(plane.x + plane.width - currLevel.exit.x, 2) + Math.pow(plane.y - currLevel.exit.y, 2)) < 20)
-                && collected >= currLevel.coinsNeeded
+            return isPlaneInCircle(currLevel.exit) && collected >= currLevel.coinsNeeded
         }
         function gameOver() {
-            ctx.font = "20px Courier"
-            ctx.fillStyle = "black"
-            ctx.fillText("Game Over!", 200, 200);
-            window.clearInterval(gameInterval)
+            gameIsOver = true
         }
         function keyDown(e) {
             startLevel = true

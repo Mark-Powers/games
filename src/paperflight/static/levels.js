@@ -6,7 +6,8 @@ var levels = {
         coinsNeeded: 0,
         exit: {
             x: 40,
-            y: 460
+            y: 460,
+            radius: 20
         },
         title: "Switch madness",
         items: [
@@ -20,19 +21,20 @@ var levels = {
         coinsNeeded: 5,
         exit: {
             x: 40,
-            y: 460
+            y: 460,
+            radius: 20
         },
         title: "Downwards Dash",
         items: [
-            constructVent(420, 580, 60, 300),
+            constructVent(420, 580, 60, 600),
             constructCoin(40, 80),
             constructVent(120, 100, 280, 100),
             constructBlock(580, 200, 10, 250),
             constructCoin(700, 240),
             constructCoin(700, 320),
             constructCoin(700, 400),
-            constructRamp(70, 410, 200, 10, 2/5),
-            constructRamp(70, 470, 200, 10, 2/5),
+            constructRamp(70, 400, 200, 10, 2/5),
+            constructRamp(70, 480, 200, 10, 2/5),
             constructCoin(170, 405),
             constructBlock(0, 0, 800, 40)
         ]

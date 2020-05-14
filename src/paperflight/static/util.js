@@ -14,3 +14,12 @@ function isPlaneInBox(box) {
         || isPointInBox(plane.x + plane.width, plane.y + plane.height, box)
         || isPointInBox(plane.x, plane.y + plane.height, box)
 }
+function isPointInCircle(x, y, circle) {
+    return Math.sqrt(Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2)) < circle.radius
+}
+function isPlaneInCircle(circle) {
+    return isPointInCircle(plane.x, plane.y, circle)
+        || isPointInCircle(plane.x + plane.width, plane.y, circle)
+        || isPointInCircle(plane.x + plane.width, plane.y + plane.height, circle)
+        || isPointInCircle(plane.x, plane.y + plane.height, circle)
+}

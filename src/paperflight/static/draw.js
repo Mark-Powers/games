@@ -9,13 +9,17 @@ function draw() {
         item.draw()
     })
     drawExit(currLevel.exit)
-
     drawPlane()
 
     ctx.fillStyle = "#222"
     ctx.font = "20px Courier"
     ctx.fillText(`Level ${currLevelIndex} (${collected}/${currLevel.coinsNeeded}) - ${currLevel.title} - Time ${Math.round(t / fps / 60)}:${Math.round(t / fps) % 60}`, 20, 20)
-
+    
+    if(gameIsOver){
+        ctx.font = "20px Courier"
+        ctx.fillStyle = "black"
+        ctx.fillText("Game Over!", 200, 200);
+    }
 }
 function drawPlane() {
     ctx.fillStyle = "#fff"

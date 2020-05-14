@@ -8,14 +8,17 @@ function update() {
         plane.x += plane.vx * plane.dir
         plane.y += plane.vy
     }
-    if (plane.x < 0 || plane.x > width - plane.width || plane.y < 0 || plane.y + plane.height > height) {
+    if (!isPlaneInBox({ x: plane.width, y: plane.height, width: width - (2*plane.width), height: height - (2*plane.height) })) {
         gameOver()
     }
     currLevel.items.forEach(item => {
         item.update()
     })
     if (atExit()) {
-        console.log("exit!")
+        setLevel(currLevelIndex + 1)
+    }
+    if(gameIsOver){
+        window.clearInterval(gameInterval)
     }
 }
 function updateVent() {
@@ -43,9 +46,7 @@ function updateRamp() {
     }
 }
 function updateCoin() {
-    if (!this.collected
-        && (Math.sqrt(Math.pow(plane.x - this.x, 2) + Math.pow(plane.y - this.y, 2)) < this.radius
-            || Math.sqrt(Math.pow(plane.x + plane.width - this.x, 2) + Math.pow(plane.y - this.y, 2)) < this.radius)) {
+    if (!this.collected && isPlaneInCircle(this)) {
         this.collected = true
         collected++
     }
