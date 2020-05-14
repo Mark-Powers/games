@@ -17,7 +17,8 @@ function update() {
     }
 }
 function updateVent() {
-    if (plane.x >= this.x - plane.width && plane.x <= this.x + this.width && plane.y < this.y) {
+    if (plane.x >= this.x - plane.width && plane.x <= this.x + this.width && this.y - this.height < plane.y && plane.y < this.y) {
+        // console.log(plane.y, this.y, this.y-this.height)
         plane.y -= 2
     }
 }

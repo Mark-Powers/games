@@ -10,7 +10,7 @@ function draw() {
 
     ctx.fillStyle = "#222"
     ctx.font = "20px Courier"
-    ctx.fillText(`Level ${currLevelIndex} (${collected}/${currLevel.coinsNeeded}) - Time ${Math.round(t / fps / 60)}:${Math.round(t / fps) % 60}`, 20, 20)
+    ctx.fillText(`Level ${currLevelIndex} (${collected}/${currLevel.coinsNeeded}) - ${currLevel.title} - Time ${Math.round(t / fps / 60)}:${Math.round(t / fps) % 60}`, 20, 20)
 
 }
 function drawPlane() {
@@ -36,8 +36,8 @@ function drawVent() {
     ctx.fillStyle = "#ccc"
     ctx.fillRect(this.x, this.y, this.width, 10)
     ctx.fillStyle = "white"
-    var yDelta = Math.sin(t / 30) * 40
-    for (var i = this.y; i > 30; i -= 60) {
+    var yDelta = Math.sin(t / 30) * 40 
+    for (var i = 0; i < this.height; i+= 60) {
         ctx.fillRect(this.x, this.y - i + yDelta, 1, 8)
         ctx.fillRect(this.x+this.width/2-2, this.y - i + yDelta/2, 1, 12)
         ctx.fillRect(this.x+this.width-2, this.y - i + yDelta, 1, 8)
@@ -71,4 +71,22 @@ function drawExit(exit) {
     ctx.beginPath()
     ctx.arc(exit.x, exit.y, 20, 0, Math.PI * 2)
     ctx.fill()
+}
+function drawSwitch(){
+    ctx.fillStyle = "black"
+    ctx.fillRect(this.x, this.y, this.width, this.height)
+}
+function drawSwitchRect(){
+    if(switchState == this.state){
+        ctx.fillStyle = "blue"
+        ctx.fillRect(this.x, this.y, this.width, this.height)
+    } else {
+        ctx.stokeStyle = "blue"
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath()
+        ctx.moveTo(this.x, this.y)
+        ctx.lineTo(this.x + this.width, this.y + this.height)
+        ctx.lineTo(this.x + this.width, this.y + this.height)
+        ctx.lineTo(this.x, this.y)
+    }
 }

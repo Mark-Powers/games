@@ -2,24 +2,17 @@ var levels = {
     1: {
         coinsNeeded: 5,
         exit: {
-            x: 40, 
+            x: 40,
             y: 460
         },
+        title: "Downwards Dash",
         items: [{
             draw: drawVent,
             update: updateVent,
             x: 420,
             y: 580,
-            width: 60
-        },
-        {
-            draw: drawRamp,
-            update: updateRamp,
-            x: 0,
-            y: 0,
-            slope: 0,
-            width: 800,
-            height: 40
+            width: 60,
+            height: 600
         },
         {
             draw: drawCoin,
@@ -33,7 +26,8 @@ var levels = {
             update: updateVent,
             x: 120,
             y: 100,
-            width: 280
+            width: 280,
+            height: 100
         },
         {
             draw: drawBlock,
@@ -69,7 +63,7 @@ var levels = {
             update: updateRamp,
             x: 70,
             y: 410,
-            slope: 2/5,
+            slope: 2 / 5,
             width: 200,
             height: 10
         },
@@ -78,7 +72,7 @@ var levels = {
             update: updateRamp,
             x: 70,
             y: 470,
-            slope: 2/5,
+            slope: 2 / 5,
             width: 200,
             height: 10
         },
@@ -89,6 +83,15 @@ var levels = {
             y: 405,
             radius: 10
         },
-    ]
+        {
+            draw: drawRamp,
+            update: updateRamp,
+            x: 0,
+            y: 0,
+            slope: 0,
+            width: 800,
+            height: 40
+        },
+        ]
     }
 }

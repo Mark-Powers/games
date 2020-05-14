@@ -22,7 +22,7 @@
     <script>
         var username = undefined
 
-        var score, plane, gameInterval, currLevelIndex, currLevel, t, collected, startLevel
+        var score, plane, gameInterval, currLevelIndex, currLevel, t, collected, startLevel, switchState
 
         var DEFAULT_VX = 3
         var DEFAULT_VY = 0.5
@@ -48,6 +48,7 @@
             }
             score = 0
             t = 0
+            switchState = 0
             plane = {
                 x: 30,
                 y: height / 4,
