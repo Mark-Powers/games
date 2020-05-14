@@ -38,10 +38,10 @@ function drawVent() {
     ctx.fillRect(this.x, this.y, this.width, 10)
     ctx.fillStyle = "white"
     var yDelta = Math.sin(t / 30) * 40 
-    for (var i = 0; i < this.height; i+= 60) {
-        ctx.fillRect(this.x, this.y - i + yDelta, 1, 8)
-        ctx.fillRect(this.x+this.width/2-2, this.y - i + yDelta/2, 1, 12)
-        ctx.fillRect(this.x+this.width-2, this.y - i + yDelta, 1, 8)
+    for (var i = 40; i < this.height; i+= 60) {
+        for (var j = 0; j < this.width; j+= 30) {
+            ctx.fillRect(this.x+j, this.y - i + yDelta, 1, 8)
+        }
     }
 }
 function drawBlock() {

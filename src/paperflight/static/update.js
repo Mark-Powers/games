@@ -30,7 +30,12 @@ function update() {
     }
 }
 function updateVent() {
-    if (isPlaneInBox(this)) {
+    // Custom box since vent height is upwards
+    if (isPlaneInBox({
+        x: this.x, 
+        y: this.y-this.height, 
+        width: this.width, 
+        height: this.height})) {
         plane.y -= 2
     }
 }
