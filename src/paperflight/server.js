@@ -5,6 +5,7 @@ function setUpRoutes(server, models, jwtFunctions, database) {
     server.get('/paperflight/update.js', (req, res) => res.sendFile(__dirname + "/static/update.js"))
     server.get('/paperflight/draw.js', (req, res) => res.sendFile(__dirname + "/static/draw.js"))
     server.get('/paperflight/items.js', (req, res) => res.sendFile(__dirname + "/static/items.js"))
+    server.get('/paperflight/util.js', (req, res) => res.sendFile(__dirname + "/static/util.js"))
 }
 
 module.exports = {

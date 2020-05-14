@@ -1,3 +1,6 @@
+/**
+ * Draw functions
+ */
 function draw() {
     ctx.fillStyle = "#4444ff"
     ctx.fillRect(0, 0, width, height)
@@ -6,7 +9,7 @@ function draw() {
         item.draw()
     })
     drawExit(currLevel.exit)
-    
+
     drawPlane()
 
     ctx.fillStyle = "#222"
@@ -36,13 +39,30 @@ function drawPlane() {
 function drawVent() {
     ctx.fillStyle = "#ccc"
     ctx.fillRect(this.x, this.y, this.width, 10)
-    ctx.fillStyle = "white"
-    var yDelta = Math.sin(t / 30) * 40 
-    for (var i = 40; i < this.height; i+= 60) {
-        for (var j = 0; j < this.width; j+= 30) {
-            ctx.fillRect(this.x+j, this.y - i + yDelta, 1, 8)
+    // every 1/3 seconds spawn new air vents
+    // (since this is purely cosmetic, updates to it are in here)
+    if (t % Math.floor(fps / 3) == 0) {
+        for (var j = 0; j <= this.width; j += 20) {
+            this.wind.push({
+                x: this.x + j,
+                y: this.y - 10,
+                height: Math.floor(Math.random() * 15) + 4
+            })
         }
     }
+    // Move up each wind a bit randomly
+    this.wind.forEach(w => {
+        w.y -= Math.random() * 4 + 2
+    })
+    // Remove all wind higher than certain height
+    this.wind = this.wind.filter(w => {
+        return this.y - w.y < this.height
+    }, this)
+    // Finally draw each wind
+    ctx.fillStyle = "white"
+    this.wind.forEach(w => {
+        ctx.fillRect(w.x, w.y, 1, w.height)
+    })
 }
 function drawBlock() {
     ctx.fillStyle = "#0d0"
@@ -73,12 +93,12 @@ function drawExit(exit) {
     ctx.arc(exit.x, exit.y, 20, 0, Math.PI * 2)
     ctx.fill()
 }
-function drawSwitch(){
+function drawSwitch() {
     ctx.fillStyle = "black"
     ctx.fillRect(this.x, this.y, this.width, this.height)
 }
-function drawSwitchRect(){
-    if(switchState == this.state){
+function drawSwitchRect() {
+    if (switchState == this.state) {
         ctx.fillStyle = "blue"
         ctx.fillRect(this.x, this.y, this.width, this.height)
     } else {
