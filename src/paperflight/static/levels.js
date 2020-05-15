@@ -36,8 +36,25 @@ levels[4].items.push(
     constructVent(500, 550, 90, 600)
 )
 
-levels[5] = createLevel("Downwards Dash", 5, 40, 460)
+levels[5] = createLevel("Switch madness", 0, 125, 420)
 levels[5].items.push(
+    constructSwitch(115, 90, 40, 40, 4),
+    constructBlock(0, 200, 250, 10),
+    constructSwitchRect(250, 50, 10, 150, 0),
+
+    constructSwitch(500, 165, 40, 40, 4),
+
+    constructSwitch(115, 240, 40, 40, 4),
+    constructBlock(0, 350, 250, 10),
+    constructSwitchRect(250, 200, 10, 150, 1),
+
+    constructBlock(250, 350, 10, 100),
+
+    constructVent(0, 550, 250, 150, 3)
+)
+
+levels[6] = createLevel("Downwards Dash", 5, 40, 460)
+levels[6].items.push(
     constructVent(420, 580, 60, 600),
     constructCoin(40, 80),
     constructVent(120, 100, 280, 100),
@@ -48,18 +65,4 @@ levels[5].items.push(
     constructRamp(70, 400, 200, 10, 2 / 5),
     constructRamp(70, 480, 200, 10, 2 / 5),
     constructCoin(170, 405),
-)
-
-levels[6] = createLevel("Switch madness", 0, 40, 460)
-levels[6].items.push(
-    constructSwitch(120, 400, 60, 60, 3),
-    constructRect(300, 400, 60, 60, 0),
-    constructRect(400, 400, 60, 60, 1),
-    constructRect(500, 400, 60, 60, 2),
-)
-
-levels[7] = createLevel("Turn on the vent", 0, 40, 460)
-levels[7].items.push(
-    constructSwitch(120, 400, 30, 60, 2),
-    constructVent(200, 550, 60, 300, 1),
 )

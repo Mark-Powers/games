@@ -40,7 +40,7 @@ function constructSwitch(x, y, width, height, stateCount){
         x, y, width, height, stateCount
     }
 }
-function constructRect(x, y, width, height, state){
+function constructSwitchRect(x, y, width, height, state){
     return{
         draw: drawSwitchRect,
         update: updateSwitchRect,
