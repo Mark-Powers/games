@@ -45,7 +45,7 @@ function drawVent() {
     ctx.fillRect(this.x, this.y, this.width, 10)
     // every 1/3 seconds spawn new air vents
     // (since this is purely cosmetic, updates to it are in here)
-    if (t % Math.floor(fps / 3) == 0) {
+    if ((this.state == -1 || this.state == switchState) && t % Math.floor(fps / 3) == 0) {
         for (var j = 0; j <= this.width; j += 20) {
             this.wind.push({
                 x: this.x + j,

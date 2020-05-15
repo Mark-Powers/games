@@ -57,3 +57,9 @@ levels[6].items.push(
     constructRect(400, 400, 60, 60, 1),
     constructRect(500, 400, 60, 60, 2),
 )
+
+levels[7] = createLevel("Turn on the vent", 0, 40, 460)
+levels[7].items.push(
+    constructSwitch(120, 400, 30, 60, 2),
+    constructVent(200, 550, 60, 300, 1),
+)

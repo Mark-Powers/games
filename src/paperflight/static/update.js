@@ -8,7 +8,7 @@ function update() {
         plane.x += plane.vx * plane.dir
         plane.y += plane.vy
     }
-    if (!isPlaneInBox({ x: plane.width, y: plane.height, width: width - (2*plane.width), height: height - (2*plane.height) })) {
+    if (!isPlaneInBox({ x: plane.width, y: plane.height, width: width - (2 * plane.width), height: height - (2 * plane.height) })) {
         gameOver()
     }
     currLevel.items.forEach(item => {
@@ -17,18 +17,19 @@ function update() {
     if (atExit()) {
         setLevel(currLevelIndex + 1)
     }
-    if(gameIsOver){
+    if (gameIsOver) {
         window.clearInterval(gameInterval)
     }
 }
 function updateVent() {
     // Custom box since vent height is upwards
-    if (isPlaneInBox({
-        x: this.x,
-        y: this.y - this.height,
-        width: this.width,
-        height: this.height
-    })) {
+    if ((this.state == -1 || this.state == switchState)
+        && isPlaneInBox({
+            x: this.x,
+            y: this.y - this.height,
+            width: this.width,
+            height: this.height
+        })) {
         plane.y -= 2
     }
 }

@@ -3,12 +3,12 @@
  * appear in a level. 
  */
 
-function constructVent(x, y, width, height){
+function constructVent(x, y, width, height, state=-1){
     return {
         draw: drawVent,
         update: updateVent,
         wind: [],
-        x, y, width, height
+        x, y, width, height, state
     }
 }
 function constructCoin(x, y, radius=10){
