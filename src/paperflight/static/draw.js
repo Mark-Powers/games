@@ -68,6 +68,29 @@ function drawVent() {
         ctx.fillRect(w.x, w.y, 1, w.height)
     })
 }
+function drawDrip(){
+    ctx.fillStyle = "#00F"
+    if (t % this.frequency == 0) {
+        this.drips.push({
+            x: this.x,
+            y: this.y,
+            radius: 8
+        })
+    }
+    this.drips.forEach(drip => {
+        drip.y += 3
+    })
+    // Remove all wind higher than certain height
+    this.drips = this.drips.filter(drip => {
+        return drip.y < height
+    })
+    // Finally draw each wind
+    this.drips.forEach(drip => {
+        ctx.beginPath()
+        ctx.arc(drip.x, drip.y, drip.radius, 0, Math.PI * 2)
+        ctx.fill()
+    })
+}
 function drawBlock() {
     ctx.fillStyle = "#0d0"
     ctx.fillRect(this.x, this.y, this.width, this.height)

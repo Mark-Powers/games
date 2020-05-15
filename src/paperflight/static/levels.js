@@ -41,20 +41,33 @@ levels[5].items.push(
     constructSwitch(115, 90, 40, 40, 4),
     constructBlock(0, 200, 250, 10),
     constructSwitchRect(250, 50, 10, 150, 0),
-
     constructSwitch(500, 165, 40, 40, 4),
-
     constructSwitch(115, 240, 40, 40, 4),
     constructBlock(0, 350, 250, 10),
     constructSwitchRect(250, 200, 10, 150, 1),
-
     constructBlock(250, 350, 10, 100),
-
     constructVent(0, 550, 250, 150, 3)
 )
 
-levels[6] = createLevel("Downwards Dash", 5, 40, 460)
+levels[6] = createLevel("Gentle Breeze", 2, 750, 150)
 levels[6].items.push(
+    constructVent(100, 550, 100, 500),
+    constructVent(600, 550, 100, 500),
+    constructCoin(275, 500),
+    constructCoin(525, 500)
+)
+
+levels[7] = createLevel("Looks like rain", 2, 750, 150)
+levels[7].items.push(
+    constructVent(100, 550, 100, 500),
+    constructVent(600, 550, 100, 500),
+    constructCoin(275, 500),
+    constructCoin(525, 500),
+    constructDrip(400, 40, 30)
+)
+
+levels[8] = createLevel("Downwards Dash", 5, 40, 460)
+levels[8].items.push(
     constructVent(420, 580, 60, 600),
     constructCoin(40, 80),
     constructVent(120, 100, 280, 100),

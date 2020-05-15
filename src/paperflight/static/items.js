@@ -55,3 +55,11 @@ function constructText(x, y, text, font){
         x, y, text, font
     }
 }
+function constructDrip(x, y, frequency){
+    return {
+        draw: drawDrip, 
+        update: updateDrip,
+        drips: [],
+        x, y, frequency
+    }
+}

@@ -33,6 +33,11 @@ function updateVent() {
         plane.y -= 2
     }
 }
+function updateDrip(){
+    if(this.drips.some(drip => isPlaneInCircle(drip))){
+        gameOver()
+    }
+}
 function updateBlock() {
     if (isPlaneInBox(this)) {
         gameOver()
