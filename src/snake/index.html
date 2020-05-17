@@ -5,11 +5,41 @@
     <title>Snake</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- <link rel="stylesheet" type="text/css" href="/css/styles.css"> -->
+    <style>
+        .spacer {
+            width: 60px;
+            height: 60px;
+            display: inline-block;
+        }
+        .btn {
+            width: 60px;
+            height: 60px;
+            display: inline-block;
+            background-color: blue;
+        }
+    </style>
 </head>
 
 <body style="padding:0; margin:0; overflow:hidden;">
-    <canvas width="400" height="400" id="canvas"></canvas>
+    <div><canvas width="400" height="400" id="canvas"></canvas></div>
+    <div >
+        <span class="spacer"></span>
+        <span class="spacer"></span>
+        <span class="btn" onclick="keyPush({keyCode: 38})"></span>
+        <span class="spacer"></span>
+    </div>
+    <div>
+        <span class="spacer"></span>
+        <span class="btn" onclick="keyPush({keyCode: 37})"></span>
+        <span class="spacer"></span>
+        <span class="btn" onclick="keyPush({keyCode: 39})"></span>
+    </div>
+    <div>
+        <span class="spacer"></span>
+        <span class="spacer"></span>
+        <span class="btn" onclick="keyPush({keyCode: 40})"></span>
+        <span class="spacer"></span>
+    </div>
     <script src="/highscore.js"></script>
     <script>
         var tileCountWidth = 40;
