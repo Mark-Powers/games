@@ -26,7 +26,7 @@ levels[2].items.push(
 levels[3] = createLevel("Coins!", 1, 400, 250)
 levels[3].items.push(
     constructText(30, 60, "Collect the needed coins to continue", "30px Courier"),
-    constructCoin(400, 200)
+    constructCoin(300, 200)
 )
 
 levels[4] = createLevel("Getting harder...", 0, 700, 200)

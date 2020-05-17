@@ -125,7 +125,7 @@ function loadTemplate() {
             for (var y = 0; y < template[layer][x].length; y++) {
                 board[layer][x].push(undefined)
                 if (template[layer][x][y]) {
-                    board[layer][x][y] = items.pop()
+                    board[layer][x][y] = items.pop() % 8
                 }
             }
         }
@@ -283,28 +283,21 @@ var mouseDownCallback = function (e) {
             break
         }
     }
-    console.log(tileLayer, tileX, tileY)
 
     if (tileLayer != undefined && board[tileLayer][tileX] != undefined && board[tileLayer][tileX][tileY] != undefined) {
-        console.log("inside if")
         if (selectedX != undefined &&
             selectedY != undefined &&
             selectedLayer != undefined) {
-            console.log("inside if 2")
             if (board[selectedLayer][selectedX][selectedY] != undefined &&
                 (tileX != selectedX || tileY != selectedY) &&
                 (board[tileLayer][tileX + 1][tileY] == undefined || board[tileLayer][tileX - 1][tileY] == undefined)) {
-                console.log("inside if 3")
-                console.log(board[selectedLayer][selectedX][selectedY], board[tileLayer][tileX][tileY])
                 if (board[selectedLayer][selectedX][selectedY] == board[tileLayer][tileX][tileY]) {
-                    console.log("inside if 4")
                     board[selectedLayer][selectedX][selectedY] = undefined
-                    board[selectedLayer][tileX][tileY] = undefined
+                    board[tileLayer][tileX][tileY] = undefined
                 }
             }
         }
         if (board[tileLayer][tileX + 1][tileY] == undefined || board[tileLayer][tileX - 1][tileY] == undefined) {
-            console.log("new selection")
             selectedLayer = tileLayer
             selectedX = tileX
             selectedY = tileY
