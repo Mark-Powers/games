@@ -9,13 +9,17 @@ function getScout() {
         id: 1, 
         text: "scout", 
         cost: 2, 
-        callback: function () { 
+        callback: function (game) { 
             var type = tileMap[Math.floor(Math.random() * 3)]
             var tile = new type()
-            status = `Your scout found a ${tile.name}. Click to place it.`
-            return {
-                tile: tile
-            }
+            messages.push(`Your scout found a ${tile.name}.`)
+
+            var randX, randY
+            do {
+                randX = Math.floor(width * Math.random())
+                randY = Math.floor(height * Math.random())
+            } while(game.level[randX][randY] != undefined)
+            game.level[randX][randY] = tile
         }
     }
 }

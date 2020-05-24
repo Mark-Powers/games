@@ -10,17 +10,8 @@ Mountain.prototype.draw = function (x, y, size) {
     ctx.stroke();
     ctx.fill();
 }
-Mountain.prototype.update = function () {
-    var event = undefined
-    if(Math.random() < 0.1){
-        event = function(){
-            
-        }
-    }
-    return {
-        gold: 1,
-        event: event
-    }
+Mountain.prototype.update = function (game) {
+    game.gold += 1
 }
 
 function Forest() {
@@ -35,15 +26,9 @@ Forest.prototype.draw = function (x, y, size) {
     ctx.stroke();
     ctx.fill();
 }
-Forest.prototype.update = function () {
+Forest.prototype.update = function (game) {
     var event = {}
-    if(Math.random() < 0.1){
-        event.status = "A tree monster taks half of your"
-    }
-    return {
-        resources: Math.floor(Math.random() * 5),
-        event: event
-    }
+    game.resources +=  Math.floor(Math.random() * 5)
 }
 
 function Town() {
@@ -60,14 +45,5 @@ Town.prototype.draw = function (x, y, size) {
     ctx.fill();
 }
 Town.prototype.update = function () {
-    var event = undefined
-    if(Math.random() < 0.1){
-        event = function(){
-            
-        }
-    }
-    return {
-        population: Math.floor(Math.random() * 4) - 1,
-        event: event
-    }
+    game.population += Math.floor(Math.random() * 4) - 1
 }

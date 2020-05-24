@@ -8,16 +8,19 @@
     <link rel="stylesheet" type="text/css" href="/sim/styles.css">
 </head>
 
-<body style="padding:0; margin:0; overflow:hidden;">
+<body style="padding:0; margin:0;">
     <div>
         <div>Population: <span id="population"></span></div>
         <div>Gold: <span id="gold"></span></div>
         <div>Resources: <span id="resources"></span></div>
-        <button onclick="status = ''; update()">Update</button>
+        <!-- <button onclick="update()">Update</button> -->
     </div>
-    <canvas id="canvas"></canvas>
-    <div id="status"></div>
+    <div style="display: flex">
+        <canvas style="padding: 1em;" id="canvas"></canvas>
+        <p>Towns create population, Mountains mine gold, Forests farm resources</p>
+    </div>
     <div id="shopDiv"></div>
+    <div style="overflow: scroll; height: 10em; border: 1px solid black"><ul id="status"></ul></div>
     <script src="/highscore.js"></script>
     <script src="/sim/tiles.js"></script>
     <script src="/sim/items.js"></script>
@@ -25,23 +28,15 @@
         var score;
         var username = undefined
 
-        var populationEl = document.getElementById("population")
-        var goldEl = document.getElementById("gold")
-        var shopEl = document.getElementById("shopDiv")
-        var statusEl = document.getElementById("status")
-        var resourceEl = document.getElementById("resources")
-
-        var population, gold, resources;
+        var game
         var shopItems = [];
-        var queuedTile
 
         var width = 10
         var height = 10
         var tileSize = 40;
-        var status = ""
 
         var t
-        var eventQueue
+        var eventQueue, messages, bindings
 
         var level
         window.onload = function () {
@@ -56,20 +51,39 @@
         }
         function init() {
             score = 0
-            level = []
+            
 
+            game = {}
+            game.population = 10
+            game.gold = 5
+            game.resources = 0
+            game.level = []
             for (var i = 0; i < width; i++) {
                 var row = []
                 for (var j = 0; j < height; j++) {
                     row.push(undefined)
                 }
-                level.push(row)
+                game.level.push(row)
             }
-            level[Math.floor(width / 2)][Math.floor(height / 2)] = new Town()
+            game.level[Math.floor(width / 2)][Math.floor(height / 2)] = new Town()
 
-            population = 10
-            gold = 5
-            resources = 0
+            messages = []
+
+            bindings = []
+            bindTo(document.getElementById("population"), () => Math.floor(game.population))
+            bindTo(document.getElementById("gold"), () => Math.floor(game.gold))
+            bindTo(document.getElementById("resources"), () => Math.floor(game.resources))
+            var statusEl = document.getElementById('status')
+            bindTo(statusEl, ()=>{
+                if(messages.length > 0){
+                    var string = "<li>" + messages.join("</li><li>") + "</li>"
+                    messages = []
+                    statusEl.scrollTop = 0
+                    return string + statusEl.innerHTML
+                } else {
+                    return statusEl.innerHTML
+                }
+            });
 
             t = 0
             eventQueue = {
@@ -79,12 +93,14 @@
                 30: getScout(),
             }
             addShopItem(getScout())
+
+            gameInterval = setInterval(update, 1000)
         }
         function draw() {
             ctx.fillStyle = "#009900"
             ctx.fillRect(0, 0, width * tileSize, height * tileSize)
             for (var i = 0; i < width; i++) {
-                var row = level[i]
+                var row = game.level[i]
                 for (var j = 0; j < height; j++) {
                     if (row[j]) {
                         row[j].draw(i, j, tileSize)
@@ -103,80 +119,55 @@
                 ctx.lineTo(i * tileSize, tileSize * height)
                 ctx.stroke()
             }
-
-            populationEl.innerText = population
-            goldEl.innerText = gold
-            statusEl.innerText = status
-            resourceEl.innerText = resources
         }
         function update() {
             t++
             for (var i = 0; i < width; i++) {
-                var row = level[i]
+                var row = game.level[i]
                 for (var j = 0; j < height; j++) {
                     if (row[j]) {
-                        processUpdate(row[j].update())
+                        row[j].update(game)
                     }
                 }
             }
-            if(eventQueue[t]){
+            if (eventQueue[t]) {
                 addShopItem(eventQueue[t])
             }
-
+            applyBindings()
             draw()
         }
         function keyPush(e) {
-            status = ""
-            update()
         }
         function mouseClick(e) {
-            if(queuedTile){
-                var x = Math.floor((e.x - canvas.offsetLeft) / tileSize)
-                var y = Math.floor((e.y - canvas.offsetTop) / tileSize)
-                if(x < 0 || width <= x || y < 0 || height <= y){
-                    return
-                }
-                if(level[x][y] == undefined){
-                    level[x][y] = queuedTile
-                    status = `You placed the ${queuedTile.name}`
-                    queuedTile = undefined
-                } else {
-                    status = `You cannot place a tile there.`
-                }
-                update()
-            }
         }
-        function addShopItem(item){
+        function addShopItem(item) {
             shopItems.push(item)
 
             var newButton = document.createElement("button")
             newButton.innerText = item.text + ": " + item.cost
             newButton.id = item.id
-            newButton.onclick = function(){
-                if(item.cost <= gold){
+            newButton.onclick = function () {
+                if (item.cost <= game.gold) {
                     shopItems = shopItems.filter(it => it.id != item.id)
                     shopDiv.removeChild(newButton)
-                    gold -= item.cost
-                    processUpdate(item.callback())
+                    game.gold -= item.cost
+                    item.callback(game)
                 } else {
-                    status = "not enough gold"
+                    message.push("not enough gold")
                 }
                 update()
             }
             shopDiv.appendChild(newButton)
             update()
         }
-        function processUpdate(response){
-            if(response.tile){
-                queuedTile = response.tile
-            } else if(response.gold){
-                gold += response.gold
-            } else if(response.population){
-                population += response.population
-            } else if(response.resources){
-                resources += response.resources
-            }
-        } 
+        function bindTo(element, callback) {
+            bindings.push([element, callback])
+        }
+        function applyBindings() {
+            bindings.forEach(binding => {
+                binding[0].innerHTML = binding[1]()
+            })
+        }
     </script>
 </body>
 
