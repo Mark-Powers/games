@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Trivia</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="/trivia/main.js"></script>
+    <link rel="stylesheet" type="text/css" href="/trivia/styles.css">
+</head>
+
+<body>
+    <div id="data">
+        <div v-if="!game" class="center">
+            <h1>
+                Trivia
+            </h1>
+            <div>
+                <div>
+                    <input style="width: 390px;" type="text" placeholder="username" v-model="username">
+                </div>
+                <div>
+                    <input style="width: 100%;" type="button" value="Host game" v-on:click="hostGame"
+                        :disabled="username.trim().length == 0">
+                </div>
+                <div>
+                    <input type="text" placeholder="game code" v-model="gameCode" style="width: 300px;"
+                        v-on:keyup.enter="joinGame">
+                    <input type="button" value="Join game" v-on:click="joinGame"
+                        :disabled="username.trim().length == 0 || gameCode.length == 0">
+                </div>
+            </div>
+        </div>
+        <div v-if="game" class="center">
+            <div v-if="!game.gameStarted">
+                <h1>Game Code:</h1>
+                <h2>{{game.gameCode}}</h2>
+                <h1>Players</h1>
+                <ul v-for="player in game.players">
+                    <li>{{player.name}}</li>
+                </ul>
+                <div v-if="game.host">
+                    <ol>
+                        <li v-for="question in game.questions">{{question}}</li>
+                    </ol>
+                    <input type="text" placeholder="question" v-model="submitText" :disabled="game.submitted"
+                        v-on:keyup.enter="submitQuestion">
+                    <input type="button" value="Submit" v-on:click="submitQuestion" :disabled="submitText.length == 0"
+                        v-if="!game.submitted">
+                    <input type="button" value="Start game" v-on:click="startGame">
+                </div>
+            </div>
+            <div v-else>
+                <h1>{{game.round+1}}/{{game.questions.length}}</h1>
+                <div v-if="game.state == STATES.GUESSING" class="typing">
+                    <h2>{{game.questions[game.round]}}</h2>
+                    <h3>Buzz order</h3>
+                        <ol>
+                            <li v-for="buzz in game.buzzes">
+                                {{buzz}}
+                            </li>
+                        </ol>
+                    <div v-if="game.host">
+                        <h3>Give points</h3>
+                        <ol>
+                            <li v-for="(player, index) in game.players">
+                                <div v-if="player.name == game.name">
+                                    <input type="button" value="next" v-on:click="endQuestion" v-if="!game.buzzes.includes(game.name)">
+                                </div>
+                                <div v-else>
+                                    {{player.name}}
+                                    <input type="button" value="+1" v-on:click="giveScore(index, 1)" v-if="!game.buzzes.includes(game.name)">
+                                    <input type="button" value="-1" v-on:click="giveScore(index, -1)" v-if="!game.buzzes.includes(game.name)">
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+                    <div v-else>
+                        <input type="button" value="Buzz In" v-on:click="buzzIn" v-if="!game.buzzes.includes(game.name)">
+                    </div>
+                </div>
+                <div v-if="game.state == STATES.WAITING" class="waiting">
+                    <h1>Score:</h1>
+                    <table>
+                        <tr>
+                            <th>Player</th>
+                            <th>Score</th>
+                        </tr>
+                        <tr v-for="(player, i) in game.players">
+                            <td>{{player.name}}</td>
+                            <td>{{player.score}}</td>
+                        </tr>
+                    </table>
+                    <div v-if="game.host">
+                        <input type="button" value="Next" v-on:click="endRound">
+                    </div>
+                </div>
+                <div v-if="game.state == STATES.OVER">
+                    <h1>Final Scores:</h1>
+                    <h2>{{game.winner}} wins!</h2>
+                    <table>
+                        <tr>
+                            <th>Player</th>
+                            <th>Score</th>
+                        </tr>
+                        <tr v-for="(player, i) in game.players">
+                            <td>{{player.name}}</td>
+                            <td>{{player.score}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

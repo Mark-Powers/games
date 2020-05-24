@@ -84,6 +84,7 @@ server.load("./quiz-bunny/server", models, jwtFunctions, database)
 server.load("./pp/server", models, jwtFunctions, database)
 server.load("./sim/server", models, jwtFunctions, database)
 server.load("./paperflight/server", models, jwtFunctions, database)
+server.load("./trivia/server", models, jwtFunctions, database)
 
 // Start the server
 server.listen(config.port);
