@@ -7,6 +7,8 @@ function setUpRoutes(server, models, jwtFunctions, database) {
     server.get('/trivia', (req, res) => res.sendFile(__dirname + "/index.html"))
     server.get('/trivia/main.js', (req, res) => res.sendFile(__dirname + "/static/main.js"))
     server.get('/trivia/styles.css', (req, res) => res.sendFile(__dirname + "/static/styles.css"))
+    server.get('/trivia/sound-effects', (req, res) => res.sendFile(__dirname + "/sound-effects.html"))
+    server.get('/trivia/', (req, res) => res.sendFile(__dirname + "/static/styles.css"))
 
     // a list of games
     var games = []
